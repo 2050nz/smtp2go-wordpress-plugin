@@ -96,5 +96,8 @@ if (!function_exists('SMTP2GO_dd')) {
 }
 
 require_once dirname(__FILE__) . '/smtp2go-class-loader.php';
+require_once dirname(__FILE__) . '/build/vendor/autoload.php';
+
+// require_once dirname(__FILE__) . '/app/GetsOption.php';
 
 run_SMTP2GO_wordpress_plugin();

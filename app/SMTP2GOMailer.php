@@ -3,20 +3,22 @@
 namespace SMTP2GO\App;
 
 use PHPMailer\PHPMailer\PHPMailer;
+use SMTP2GO\App\Concerns\GetsOption;
 use SMTP2GOWPPlugin\SMTP2GO\ApiClient;
 use SMTP2GOWPPlugin\SMTP2GO\Collections\Mail\AddressCollection;
 use SMTP2GOWPPlugin\SMTP2GO\Collections\Mail\AttachmentCollection;
 use SMTP2GOWPPlugin\SMTP2GO\Service\Mail\Send;
-use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Address;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Attachment;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\CustomHeader;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\InlineAttachment;
+use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Address;
+
 
 require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
 require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
-require_once dirname(__FILE__, 2) . '/build/vendor/autoload.php';
 class SMTP2GOMailer extends PHPMailer
 {
+    use GetsOption;
     /**
      * The arguments passed by wp_mail
      *
@@ -37,8 +39,8 @@ class SMTP2GOMailer extends PHPMailer
 
     protected function mailSend($header, $body)
     {
-        $from = [get_option('smtp2go_from_address'), get_option('smtp2go_from_name')];
-
+        $from = [$this->getOption('smtp2go_from_address'), $this->getOption('smtp2go_from_name')];
+        
         $addresses = [];
         foreach ($this->getToAddresses() as $addressItem) {
             $addresses[] = new Address(...$addressItem);
@@ -108,7 +110,7 @@ class SMTP2GOMailer extends PHPMailer
             $mailSendService->setSender(new Address($this->From, $this->FromName));
         }
 
-        $client = new ApiClient(get_option('smtp2go_api_key'));
+        $client = new ApiClient($this->getOption('smtp2go_api_key'));
         $client->setMaxSendAttempts(2);
         $client->setTimeoutIncrement(0);
         $success            = $client->consume($mailSendService);
@@ -122,7 +124,7 @@ class SMTP2GOMailer extends PHPMailer
      */
     private function processCustomHeaders(Send $mailSendService)
     {
-        $raw_custom_headers =  get_option('smtp2go_custom_headers');
+        $raw_custom_headers =  $this->getOption('smtp2go_custom_headers');
 
         if (!empty($raw_custom_headers['header'])) {
             foreach ($raw_custom_headers['header'] as $index => $header) {
@@ -176,4 +178,6 @@ class SMTP2GOMailer extends PHPMailer
     {
         return $this->last_request;
     }
+
+   
 }

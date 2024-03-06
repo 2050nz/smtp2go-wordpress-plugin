@@ -29,6 +29,8 @@ namespace SMTP2GO\App;
  */
 class WordpressPlugin
 {
+    use \SMTP2GO\App\Concerns\GetsOption;
+
     /**
      * The loader that's responsible for maintaining and registering all hooks that power
      * the plugin.
@@ -130,6 +132,13 @@ class WordpressPlugin
      */
     private function defineAdminHooks()
     {
+        $this->loader->addAction('phpmailer_init', $this, 'configurePhpmailer');
+
+        //disable admin page if mu-plugin is installed
+        if (function_exists('smtp2go_mu_options')) {
+            return;
+        }
+
         $plugin_admin = new WordpressPluginAdmin($this->getPluginName(), $this->getVersion());
 
         $this->loader->addAction('admin_menu', $plugin_admin, 'addMenuPage');
@@ -143,14 +152,15 @@ class WordpressPlugin
 
         $this->loader->addAction('wp_ajax_smtp2go_send_email', $plugin_admin, 'sendTestEmail');
 
-        $this->loader->addAction('phpmailer_init', $this, 'configurePhpmailer');
     }
 
     public function configurePhpmailer($phpmailer)
     {
-        if (!get_option('smtp2go_enabled')) {
+        
+        if (!$this->getOption('smtp2go_enabled')) {
             return;
         }
+        
         //ensures that mail goes through our extended mailSend method
 
         /** @var \PHPMailer\PHPMailer\PHPMailer $phpmailer */
@@ -172,7 +182,7 @@ class WordpressPlugin
     {
         global $phpmailer;
 
-        if (!get_option('smtp2go_enabled') && !defined('SMTP2GO_TEST_MAIL')) {
+        if (!$this->getOption('smtp2go_enabled') && !defined('SMTP2GO_TEST_MAIL')) {
             return $args;
         }
 
