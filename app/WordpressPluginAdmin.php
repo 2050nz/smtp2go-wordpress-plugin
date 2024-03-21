@@ -8,7 +8,6 @@ use SMTP2GOWPPlugin\GuzzleHttp\Exception\InvalidArgumentException;
 use SMTP2GOWPPlugin\SMTP2GO\ApiClient;
 use SMTP2GOWPPlugin\SMTP2GO\Service\Service;
 
-require_once dirname(__FILE__, 2) . '/build/vendor/autoload.php';
 
 /**
  * The admin-specific functionality of the plugin.
