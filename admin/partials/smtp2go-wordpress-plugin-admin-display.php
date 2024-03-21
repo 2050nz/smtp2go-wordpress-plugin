@@ -50,15 +50,15 @@ function SMTP2GO_tab_active($tab)
     </div>
     <div class="nav-tab-wrapper">
 
-        <a href="<?php echo admin_url(add_query_arg(array('page' => 'smtp2go-wordpress-plugin', 'tab' => 'settings'), 'admin.php')) ?>"
+        <a href="<?php echo admin_url(add_query_arg(array('page' => 'smtp2go-wordpress-plugin', 'tab' => 'settings'), is_network_admin() ? 'network/admin.php' : 'admin.php')) ?>"
             class="nav-tab <?php echo SMTP2GO_tab_active('settings') ?>"><?php _e('Settings', $this->plugin_name)?></a>
         <?php
         if (get_option('smtp2go_api_key')):
         ?>
-        <a href="<?php echo admin_url(add_query_arg(array('page' => 'smtp2go-wordpress-plugin', 'tab' => 'test'), 'admin.php')) ?>"
+        <a href="<?php echo admin_url(add_query_arg(array('page' => 'smtp2go-wordpress-plugin', 'tab' => 'test'), is_network_admin() ? 'network/admin.php' : 'admin.php')) ?>"
             class="nav-tab <?php echo SMTP2GO_tab_active('test') ?>">Test</a>
 
-        <a href="<?php echo admin_url(add_query_arg(array('page' => 'smtp2go-wordpress-plugin', 'tab' => 'stats'), 'admin.php')) ?>"
+        <a href="<?php echo admin_url(add_query_arg(array('page' => 'smtp2go-wordpress-plugin', 'tab' => 'stats'), is_network_admin() ? 'network/admin.php' : 'admin.php')) ?>"
             class="nav-tab <?php echo SMTP2GO_tab_active('stats') ?> js-stats-tab">Stats<span
                 class="js-stats-tab-span spinner" style="float: none; display: none; margin: 0px 10px 2px ;"></span></a>
 
@@ -70,7 +70,7 @@ function SMTP2GO_tab_active($tab)
 
     <h1><?php _e('General Settings', $this->plugin_name)?></h1>
         <p style="font-weight: normal;">To create an API key, log in to the SMTP2GO web app, click "Sending > API Keys". Copy the API key then complete the details below.</p>
-    <form action="options.php" method="post">
+    <form action="<?php echo is_network_admin() ? 'edit.php?action=smtp2gonws' : 'options.php' ?>" method="post">
         <?php
 // output security fields for the registered setting "smtp2go"
 settings_fields('api_settings');

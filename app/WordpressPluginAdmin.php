@@ -2,7 +2,9 @@
 
 namespace SMTP2GO\App;
 
-
+use RuntimeException;
+use GuzzleHttp\Exception\GuzzleException;
+use SMTP2GOWPPlugin\GuzzleHttp\Exception\InvalidArgumentException;
 use SMTP2GOWPPlugin\SMTP2GO\ApiClient;
 use SMTP2GOWPPlugin\SMTP2GO\Service\Service;
 
@@ -61,6 +63,8 @@ class WordpressPluginAdmin
         $this->version     = $version;
     }
 
+
+
     /**
      * Register all settings fields for the admin page
      *
@@ -76,6 +80,40 @@ class WordpressPluginAdmin
             array($this, 'generalSection'),
             $this->plugin_name
         );
+
+
+        /** api key field */
+        register_setting(
+            'api_settings',
+            'smtp2go_enabled'
+        );
+        if (is_network_admin()) {
+            register_setting(
+                'api_settings',
+                'smtp2go_network_wide'
+            );
+
+            add_settings_field(
+                'network_wide_settings',
+                __('Enable this plugin network wide *', $this->plugin_name),
+                array($this, 'outputCheckboxHtml'),
+                $this->plugin_name,
+                'smtp2go_settings_section',
+                array(
+                    'name' => 'smtp2go_network_wide',
+                    'hint' => 'Save time by enabling this plugin network wide. This will apply the same settings to all sites on your network. When this is enabled
+                    the rest of the plugin settings will show below and the admin page for this plugin will be hidden from all sites except the network admin.'
+                )
+            );
+        }
+
+        //the fields below should only show if its either not multisite or if its multisite and the network wide setting is not enabled
+
+        if (is_network_admin() && get_option('smtp2go_network_wide') == 0) {
+            return;
+        }
+
+
         add_settings_section('smtp2go_section_divider', '', array($this, 'sectionDivider'), $this->plugin_name);
 
         add_settings_section(
@@ -83,12 +121,6 @@ class WordpressPluginAdmin
             'Custom Headers',
             array($this, 'customHeadersSection'),
             $this->plugin_name
-        );
-
-        /** api key field */
-        register_setting(
-            'api_settings',
-            'smtp2go_enabled'
         );
 
         add_settings_field(
@@ -344,6 +376,10 @@ class WordpressPluginAdmin
             $label = $args['label'];
         }
         echo '<div style="display:flex;align-items:center;"><input  id="' . $field_name . '" type="checkbox"' . $required . ' class="smtp2go_text_input" name="' . $field_name . '" value="1"' . $checked . '/> <label for="' . $field_name . '">' . $label . '</label></div>';
+
+        if (!empty($args['hint'])) {
+            echo $args['hint'];
+        }
     }
 
     public function outputApiKeyHtml()
@@ -392,6 +428,18 @@ class WordpressPluginAdmin
         );
     }
 
+    /**
+     * Add Network Settings
+     * @return void 
+     * @throws RuntimeException 
+     * @throws GuzzleException 
+     * @throws InvalidArgumentException 
+     */
+    public function addNetworkMenuPage()
+    {
+        $this->addMenuPage();
+    }
+
     public function renderStatsPage()
     {
         $apiKey = get_option('smtp2go_api_key');
@@ -425,6 +473,52 @@ class WordpressPluginAdmin
     public function enqueueScripts()
     {
         wp_enqueue_script($this->plugin_name, dirname(plugin_dir_url(__FILE__)) . '/admin/js/smtp2go-wordpress-plugin-admin.js', array('jquery'), $this->version, false);
+    }
+
+    public function saveNetworkSettings()
+    {
+        if (!current_user_can('manage_network_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.'));
+        }
+        if (empty($_POST['smtp2go_network_wide'])) {
+            delete_option('smtp2go_network_wide');
+        } else {
+            update_option('smtp2go_network_wide', 1);
+        }
+
+        if (empty($_POST['smtp2go_enabled'])) {
+            delete_option('smtp2go_enabled');
+        } else {
+            update_option('smtp2go_enabled', 1);
+        }
+
+        if (empty($_POST['smtp2go_api_key'])) {
+            delete_option('smtp2go_api_key');
+        } else {
+            if ($this->validateApiKey($_POST['smtp2go_api_key'])) {
+                update_option('smtp2go_api_key', $_POST['smtp2go_api_key']);
+            }
+        }
+        //sender name
+
+        if (empty($_POST['smtp2go_from_name'])) {
+            delete_option('smtp2go_from_name');
+        } else {
+            if ($this->validateSenderName($_POST['smtp2go_from_name'])) {
+                
+                update_option('smtp2go_from_name', sanitize_text_field($_POST['smtp2go_from_name']));
+            }
+        }
+
+        //sender email address
+        if (empty($_POST['smtp2go_from_address'])) {
+            delete_option('smtp2go_from_address');
+        } else {
+            update_option('smtp2go_from_address', sanitize_email($_POST['smtp2go_from_address']));
+        }
+
+        wp_redirect(admin_url('network/admin.php?page=smtp2go-wordpress-plugin'));
+        exit;
     }
 
     public function sendTestEmail()
