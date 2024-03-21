@@ -137,32 +137,34 @@ class WordpressPlugin
         $plugin_admin = new WordpressPluginAdmin($this->getPluginName(), $this->getVersion());
 
 
-        if (is_multisite()) {
+        if (is_multisite() && is_network_admin()) {
             $this->loader->addAction('network_admin_menu', $plugin_admin, 'addNetworkMenuPage');
             $this->loader->addAction('network_admin_edit_smtp2gonws', $plugin_admin, 'saveNetworkSettings');
 
-            $this->loader->addAction( 'network_admin_notices', $plugin_admin, 'networkAdminNotices' );
+            $this->loader->addAction('network_admin_notices', $plugin_admin, 'networkAdminNotices');
         }
 
-        
-        //if multisite and network wide, dont show the menu
-        if (!is_admin() && is_multisite() && get_option('smtp2go_network_wide') == 1
-        ) {
-            return;
-        }
+        $this->loader->addAction('wp_ajax_smtp2go_send_email', $plugin_admin, 'sendTestEmail');
+
+
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueStyles');
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueScripts');
 
-        $this->loader->addAction('admin_menu', $plugin_admin, 'addMenuPage');
+
 
         $this->loader->addFilter('plugin_action_links_' . SMTP2GO_PLUGIN_BASENAME, $plugin_admin, 'addSettingsLink');
 
 
         $this->loader->addAction('admin_init', $plugin_admin, 'registerSettings');
 
+        //if multisite and network wide, dont show the menu
+        if (
+            !is_network_admin() && is_multisite() && get_option('smtp2go_network_wide') == 1
+        ) {
 
-
-        $this->loader->addAction('wp_ajax_smtp2go_send_email', $plugin_admin, 'sendTestEmail');
+            return;
+        }
+        $this->loader->addAction('admin_menu', $plugin_admin, 'addMenuPage');
     }
 
 
