@@ -140,6 +140,8 @@ class WordpressPlugin
         if (is_multisite()) {
             $this->loader->addAction('network_admin_menu', $plugin_admin, 'addNetworkMenuPage');
             $this->loader->addAction('network_admin_edit_smtp2gonws', $plugin_admin, 'saveNetworkSettings');
+
+            $this->loader->addAction( 'network_admin_notices', $plugin_admin, 'networkAdminNotices' );
         }
 
         

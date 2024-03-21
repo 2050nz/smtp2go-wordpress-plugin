@@ -50,6 +50,8 @@ class WordpressPluginAdmin
      */
     private $version;
 
+    private $invalidFields = array();
+
     /**
      * Initialize the class and set its properties.
      *
@@ -95,13 +97,13 @@ class WordpressPluginAdmin
 
             add_settings_field(
                 'network_wide_settings',
-                __('Enable this plugin network wide *', $this->plugin_name),
+                __('Network wide settings *', $this->plugin_name),
                 array($this, 'outputCheckboxHtml'),
                 $this->plugin_name,
                 'smtp2go_settings_section',
                 array(
                     'name' => 'smtp2go_network_wide',
-                    'hint' => 'Save time by enabling this plugin network wide. This will apply the same settings to all sites on your network. When this is enabled
+                    'hint' => 'Save time by applying plugin settings network wide. This will apply the same settings to all sites on your network. When this is enabled
                     the rest of the plugin settings will show below and the admin page for this plugin will be hidden from all sites except the network admin.'
                 )
             );
@@ -475,6 +477,11 @@ class WordpressPluginAdmin
         wp_enqueue_script($this->plugin_name, dirname(plugin_dir_url(__FILE__)) . '/admin/js/smtp2go-wordpress-plugin-admin.js', array('jquery'), $this->version, false);
     }
 
+    private function hasError($key)
+    {
+        return in_array($key, $this->invalidFields);
+    }
+
     public function saveNetworkSettings()
     {
         if (!current_user_can('manage_network_options')) {
@@ -492,21 +499,25 @@ class WordpressPluginAdmin
             update_option('smtp2go_enabled', 1);
         }
 
-        if (empty($_POST['smtp2go_api_key'])) {
-            delete_option('smtp2go_api_key');
-        } else {
-            if ($this->validateApiKey($_POST['smtp2go_api_key'])) {
-                update_option('smtp2go_api_key', $_POST['smtp2go_api_key']);
+        if (!empty($_POST['smtp2go_api_key'])) {
+            $validatedKey = $this->validateApiKey($_POST['smtp2go_api_key']);
+            if ($validatedKey && !$this->hasError('smtp2go_api_key')) {
+                update_option('smtp2go_api_key', $validatedKey);
+            } else {
+                wp_redirect(admin_url('network/admin.php?page=smtp2go-wordpress-plugin&notice=invalid_api_key'));
+                exit;
             }
-        }
-        //sender name
+        }        
 
         if (empty($_POST['smtp2go_from_name'])) {
             delete_option('smtp2go_from_name');
         } else {
-            if ($this->validateSenderName($_POST['smtp2go_from_name'])) {
-                
-                update_option('smtp2go_from_name', sanitize_text_field($_POST['smtp2go_from_name']));
+            $validated = $this->validateSenderName($_POST['smtp2go_from_name']);
+            if ($validated && !$this->hasError('smtp2go_from_name')) {
+                update_option('smtp2go_from_name', $validated);
+            } else {
+                wp_redirect(admin_url('network/admin.php?page=smtp2go-wordpress-plugin&notice=invalid_sender_name'));
+                exit;
             }
         }
 
@@ -517,8 +528,27 @@ class WordpressPluginAdmin
             update_option('smtp2go_from_address', sanitize_email($_POST['smtp2go_from_address']));
         }
 
+        //custom headers
+        $headers = $this->cleanCustomHeaderOptions($_POST['smtp2go_custom_headers']);        
+        update_option('smtp2go_custom_headers', $headers);
+        
+
         wp_redirect(admin_url('network/admin.php?page=smtp2go-wordpress-plugin'));
         exit;
+    }
+
+    public function networkAdminNotices()
+    {
+        if (!empty($_GET['notice'])) {
+            switch ($_GET['notice']) {
+                case 'invalid_api_key':
+                    echo '<div class="notice notice-error is-dismissible"><p>' . __('Invalid API key entered.', $this->plugin_name) . '</p></div>';
+                    break;
+                case 'invalid_sender_name':
+                    echo '<div class="notice notice-error is-dismissible"><p>' . __('Invalid Sender Name Entered', $this->plugin_name) . '</p></div>';
+                    break;
+            }
+        }
     }
 
     public function sendTestEmail()
@@ -626,6 +656,7 @@ class WordpressPluginAdmin
             $input = get_option('smtp2go_api_key');
         }
         if (empty($input) || strpos($input, 'api-') !== 0) {
+            $this->invalidFields[] = 'smtp2go_api_key';
             add_settings_error('smtp2go_messages', 'smtp2go_message', __('Invalid API key entered.', $this->plugin_name));
             return get_option('smtp2go_api_key');
         }
@@ -636,6 +667,7 @@ class WordpressPluginAdmin
     public function validateSenderName($input)
     {
         if (empty($input) || preg_match('|[/\x22]|', $input)) {
+            $this->invalidFields[] = 'smtp2go_from_name';
             add_settings_error('smtp2go_messages', 'smtp2go_message', __('Invalid Sender Name entered.', $this->plugin_name));
             return get_option('smtp2go_from_name');
         }
