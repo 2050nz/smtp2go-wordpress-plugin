@@ -51,8 +51,10 @@ class SMTP2GOMailer extends PHPMailer
             $this->Subject,
             $this->Body
         );
-
+        $wpVersion = get_bloginfo('version');
         $mailSendService->addCustomHeader(new CustomHeader('X-Smtp2go-WP', SMTP2GO_WORDPRESS_PLUGIN_VERSION));
+        $mailSendService->addCustomHeader(new CustomHeader('X-Smtp2go-WP-VERSION', $wpVersion));
+
 
         $this->processCustomHeaders($mailSendService);
         $this->processReplyTos($mailSendService);
