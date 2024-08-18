@@ -15,7 +15,11 @@ class SecureApiKeyHelper
 
     public function __construct()
     {
+
+        // TODO make sure we have openssl before this
         $this->ivlen = openssl_cipher_iv_length(self::CIPHER);
+
+        // TODO  - can we trust that users won't change the wp-config AUTH stuff?
         $this->key = defined('AUTH_KEY') ? AUTH_KEY : $this->key;
 
         $this->canEncrypt = extension_loaded('openssl')
