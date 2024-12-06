@@ -7,6 +7,7 @@ name: End-To-End Tests
       - prerelease
 jobs:
   test:
+    if: github.repository == '2050nz/smtp2go-wordpress-plugin'
     name: End-To-End Tests
     runs-on: ubuntu-latest
     environment: Test
