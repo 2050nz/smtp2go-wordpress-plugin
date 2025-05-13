@@ -6,11 +6,17 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
+    'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
+    'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
     'SMTP2GOWPPlugin\\SMTP2GO\\' => array($vendorDir . '/smtp2go-oss/smtp2go-php/src/SMTP2GO'),
     'SMTP2GOWPPlugin\\Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-factory/src', $vendorDir . '/psr/http-message/src'),
     'SMTP2GOWPPlugin\\Psr\\Http\\Client\\' => array($vendorDir . '/psr/http-client/src'),
+    'SMTP2GOWPPlugin\\PhpOption\\' => array($vendorDir . '/phpoption/phpoption/src/PhpOption'),
     'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
     'SMTP2GOWPPlugin\\GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
     'SMTP2GOWPPlugin\\GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
+    'SMTP2GOWPPlugin\\GrahamCampbell\\ResultType\\' => array($vendorDir . '/graham-campbell/result-type/src'),
+    'SMTP2GOWPPlugin\\Dotenv\\' => array($vendorDir . '/vlucas/phpdotenv/src'),
     'SMTP2GOWPPlugin\\Composer\\CaBundle\\' => array($vendorDir . '/composer/ca-bundle/src'),
 );

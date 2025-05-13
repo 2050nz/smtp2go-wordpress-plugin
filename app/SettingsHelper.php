@@ -22,8 +22,17 @@ class SettingsHelper
         return false;
     }
 
+    public static function settingHasEnvironmentVariable($field)
+    {
+        return isset($_ENV[$field]);
+    }
+
     public static function getOption($field)
     {
+        $envField = strtoupper($field);
+        if (isset($_ENV[$envField])) {
+            return $_ENV[$envField];
+        }
         if (static::settingHasDefinedConstant($field)) {
             return constant(static::$fieldToConstantMapping[$field]);
         }

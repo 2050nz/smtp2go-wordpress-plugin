@@ -311,7 +311,8 @@ class WordpressPluginAdmin
             $this->plugin_name,
             'smtp2go_settings_section',
             array(
-                'name' => 'smtp2go_force_from_address', 'label' => __('Ignores other plugin settings and forces the From address to be the one set above.', $this->plugin_name),
+                'name' => 'smtp2go_force_from_address',
+                'label' => __('Ignores other plugin settings and forces the From address to be the one set above.', $this->plugin_name),
             )
         );
 
@@ -538,12 +539,20 @@ class WordpressPluginAdmin
 
     public function outputApiKeyHtml()
     {
-        if (SettingsHelper::settingHasDefinedConstant('smtp2go_api_key')) {
+        $inDatabase = get_option('smtp2go_api_key');
+        $outputField = true;
+        if (SettingsHelper::settingHasEnvironmentVariable('SMTP2GO_API_KEY')) {
+            echo '<span style="cursor: default; font-weight: normal;">The API key is set as an environment value.</span>';
+            $outputField = false;
+        } elseif (SettingsHelper::settingHasDefinedConstant('smtp2go_api_key')) {
             echo '<span style="cursor: default; font-weight: normal;">The API key is defined as a constant in your wp-config.php file.</span>';
-            if (get_option('smtp2go_api_key')) {
-                //show a delete from db button
-                echo '<br/><a href="javascript:;" class="js-smtp2go_delete_api_key">Delete API Key from Database</a>';
-            }
+            $outputField = false;
+        }
+
+        if ($inDatabase) {
+            echo '<br/><a href="javascript:;" class="js-smtp2go_delete_api_key">Delete API Key from Database</a>';
+        }
+        if (!$outputField) {
             return;
         }
 

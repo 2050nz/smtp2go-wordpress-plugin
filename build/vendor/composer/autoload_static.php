@@ -10,22 +10,43 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
+            'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Php80\\' => 39,
+            'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Mbstring\\' => 42,
+            'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Ctype\\' => 39,
             'SMTP2GOWPPlugin\\SMTP2GO\\' => 24,
             'SMTP2GOWPPlugin\\Psr\\Http\\Message\\' => 33,
             'SMTP2GOWPPlugin\\Psr\\Http\\Client\\' => 32,
+            'SMTP2GOWPPlugin\\PhpOption\\' => 26,
             'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\' => 32,
             'SMTP2GOWPPlugin\\GuzzleHttp\\Promise\\' => 35,
             'SMTP2GOWPPlugin\\GuzzleHttp\\' => 27,
+            'SMTP2GOWPPlugin\\GrahamCampbell\\ResultType\\' => 42,
+            'SMTP2GOWPPlugin\\Dotenv\\' => 23,
             'SMTP2GOWPPlugin\\Composer\\CaBundle\\' => 34,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Php80\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
+        ),
+        'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Ctype\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
         'SMTP2GOWPPlugin\\SMTP2GO\\' => 
         array (
             0 => __DIR__ . '/..' . '/smtp2go-oss/smtp2go-php/src/SMTP2GO',
@@ -39,6 +60,10 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
+        'SMTP2GOWPPlugin\\PhpOption\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
+        ),
         'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
@@ -51,6 +76,14 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
+        'SMTP2GOWPPlugin\\GrahamCampbell\\ResultType\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/graham-campbell/result-type/src',
+        ),
+        'SMTP2GOWPPlugin\\Dotenv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
+        ),
         'SMTP2GOWPPlugin\\Composer\\CaBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/ca-bundle/src',
@@ -59,6 +92,11 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'SMTP2GOWPPlugin\\Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'SMTP2GOWPPlugin\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
+        'SMTP2GOWPPlugin\\Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'SMTP2GOWPPlugin\\UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+        'SMTP2GOWPPlugin\\ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

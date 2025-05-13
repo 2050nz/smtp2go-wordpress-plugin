@@ -2,6 +2,8 @@
 
 namespace SMTP2GO\App;
 
+use SMTP2GOWPPlugin\Dotenv\Dotenv;
+
 /**
  * The file that defines the core plugin class
  *
@@ -82,6 +84,9 @@ class WordpressPlugin
         $this->setLocale();
         $this->defineAdminHooks();
         $this->definePublicHooks();
+
+        Dotenv::createImmutable(ABSPATH)->safeLoad();
+        
     }
 
     /**
