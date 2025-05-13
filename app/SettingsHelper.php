@@ -7,6 +7,7 @@ class SettingsHelper
 
     private static $fieldToConstantMapping = array(
         'smtp2go_api_key' => 'SMTP2GO_API_KEY',
+        'SMTP2GO_ENCRYPTION_KEY' => 'SMTP2GO_ENCRYPTION_KEY',
     );
 
     public static function settingHasDefinedConstant($field)
@@ -20,6 +21,20 @@ class SettingsHelper
         }
 
         return false;
+    }
+
+    /**
+     * Get the setting value from the filesystem via a CONSTANT or $_ENV variable loaded by dotenv.
+     */
+    public static function getSettingFromFileSystem($constantName)
+    {
+        if (isset($_ENV[$constantName])) {
+            return $_ENV[$constantName];
+        }
+        if (defined($constantName)) {
+            return constant($constantName);
+        }
+        //can either be a define()'d value or $_ENV variable
     }
 
     public static function getOption($field)

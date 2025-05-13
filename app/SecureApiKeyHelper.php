@@ -18,7 +18,11 @@ class SecureApiKeyHelper
         }
 
         $this->ivlen = openssl_cipher_iv_length(self::CIPHER);
-        $this->key = defined('AUTH_KEY') ? AUTH_KEY : $this->key;
+        if (false != ($val = SettingsHelper::getSettingFromFileSystem('SMTP2GO_ENCRYPTION_KEY'))) {
+            $this->key = $val;
+        } elseif (defined('AUTH_KEY')) {
+            $this->key = AUTH_KEY;
+        }
     }
 
     /**
@@ -50,13 +54,19 @@ class SecureApiKeyHelper
         if (!$this->canEncrypt() || strpos($maybeEncryptedKey, 'api-') === 0) {
             return $maybeEncryptedKey;
         }
-        
+
         $encrypted = base64_decode($maybeEncryptedKey);
 
         $iv = substr($encrypted, 0, $this->ivlen);
 
         $encrypted = substr($encrypted, $this->ivlen);
 
-        return openssl_decrypt($encrypted, self::CIPHER, $this->key, 0, $iv);
+        $decrypted = openssl_decrypt($encrypted, self::CIPHER, $this->key, 0, $iv);
+
+        if (strpos($decrypted, 'api-') !== 0) {
+            error_log('Unable to decrypt api key');
+            wp_admin_notice('Unable to decrypt your SMTP2GO Api key, likely due to the encryption key changing. Please re-enter your key.', 'error');        
+        }
+        return $decrypted;
     }
 }
