@@ -2,6 +2,22 @@ require('dotenv').config();
 
 const { test, expect } = require('@wordpress/e2e-test-utils-playwright');
 
+// const fs = require('fs');
+// const path = require('path');
+
+// test('Access filesystem example', async ({ page, admin }) => {
+//     // Example: Write to a file
+//     const filePath = path.join('/var/www/html/', 'test-output.txt');
+//     fs.writeFileSync(filePath, 'This is a test output.');
+
+//     // Example: Read from a file
+//     const content = fs.readFileSync(filePath, 'utf-8');
+//     console.log('File content:', content);
+
+//     // Your test logic here
+//     await admin.visitAdminPage('admin.php', 'page=smtp2go-wordpress-plugin');
+// });
+
 test('Setup SMTP2GO Plugin', async ({ page, admin }) => {
   await admin.visitAdminPage('admin.php', 'page=smtp2go-wordpress-plugin');
 
