@@ -59,10 +59,6 @@ class WordpressPluginAdmin
     {
         $this->plugin_name = $plugin_name;
         $this->version     = $version;
-        //wrap in check is_admin() ?
-        $this->checkForConflictingPlugins();
-
-
     }
 
     public function truncateLogs()
@@ -73,6 +69,23 @@ class WordpressPluginAdmin
         $url = admin_url('admin.php?page=' . $this->plugin_name . '&tab=logs');
         header('Location: ' . $url);
         exit;
+    }
+
+    public function validateKeyDecryption()
+    {
+        $keyHelper = new SecureApiKeyHelper();
+        $decrypted    = $keyHelper->decryptKey(SettingsHelper::getOption('smtp2go_api_key'));
+
+
+        if (strpos($decrypted, 'api-') !== 0) {
+            error_log('Unable to decrypt api key');
+            // wp_admin_notice('Unable to decrypt your SMTP2GO Api key, likely due to the encryption key changing. Please re-enter your key.', 'error');
+            add_action('admin_notices', function () {
+                echo '<div class="notice notice-error ">';
+                echo '<p><strong>Critical!</strong> Unable to decrypt your SMTP2GO Api key, likely due to the encryption key changing. Please re-enter your key.</p>';
+                echo '</div>';
+            });
+        }
     }
 
     public function downloadLogs()
@@ -154,7 +167,7 @@ class WordpressPluginAdmin
      * @since 1.7.2
      * @return void
      */
-    private function checkForConflictingPlugins()
+    public function checkForConflictingPlugins()
     {
         if (!function_exists('get_plugins')) {
             include ABSPATH . '/wp-admin/includes/plugin.php';
@@ -306,7 +319,8 @@ class WordpressPluginAdmin
             $this->plugin_name,
             'smtp2go_settings_section',
             array(
-                'name' => 'smtp2go_force_from_address', 'label' => __('Ignores other plugin settings and forces the From address to be the one set above.', $this->plugin_name),
+                'name' => 'smtp2go_force_from_address',
+                'label' => __('Ignores other plugin settings and forces the From address to be the one set above.', $this->plugin_name),
             )
         );
 
