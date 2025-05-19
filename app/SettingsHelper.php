@@ -24,13 +24,12 @@ class SettingsHelper
     }
 
     /**
-     * Get the setting value from the filesystem via a CONSTANT or $_ENV variable loaded by dotenv.
+     * Get the setting value from the filesystem via a CONSTANT
+     * @todo add .env support
      */
     public static function getSettingFromFileSystem($constantName)
     {
-        if (isset($_ENV[$constantName])) {
-            return $_ENV[$constantName];
-        }
+
         if (defined($constantName)) {
             return constant($constantName);
         }
