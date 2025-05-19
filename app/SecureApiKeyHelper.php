@@ -11,6 +11,8 @@ class SecureApiKeyHelper
 
     private $key = 'default-key-not-secure';
 
+    private $hasShownWarning = false;
+
     public function __construct()
     {
         if (!$this->canEncrypt()) {
@@ -63,10 +65,7 @@ class SecureApiKeyHelper
 
         $decrypted = openssl_decrypt($encrypted, self::CIPHER, $this->key, 0, $iv);
 
-        if (strpos($decrypted, 'api-') !== 0) {
-            error_log('Unable to decrypt api key');
-            wp_admin_notice('Unable to decrypt your SMTP2GO Api key, likely due to the encryption key changing. Please re-enter your key.', 'error');        
-        }
+        
         return $decrypted;
     }
 }
