@@ -131,6 +131,7 @@ class WordpressPlugin
     private function defineAdminHooks()
     {
         $plugin_admin = new WordpressPluginAdmin($this->getPluginName(), $this->getVersion());
+        /** @see https://developer.wordpress.org/reference/hooks/admin_action_action/ */
         $this->loader->addAction('admin_action_downloadSmtp2goLogs', $plugin_admin, 'downloadLogs');
         $this->loader->addAction('admin_action_truncateSmtp2goLogs', $plugin_admin, 'truncateLogs');
 
@@ -139,7 +140,11 @@ class WordpressPlugin
 
         $this->loader->addFilter('plugin_action_links_' . SMTP2GO_PLUGIN_BASENAME, $plugin_admin, 'addSettingsLink');
 
+        /** @see https://developer.wordpress.org/apis/hooks/action-reference/#actions-run-during-an-admin-page-request */
         $this->loader->addAction('admin_init', $plugin_admin, 'registerSettings');
+        $this->loader->addAction('admin_init', $plugin_admin,'validateKeyDecryption');
+
+        $this->loader->addAction('plugins_loaded', $plugin_admin, 'checkForConflictingPlugins');
 
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueStyles');
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueScripts');
