@@ -79,12 +79,13 @@ class WordpressPluginAdmin
 
         if (strpos($decrypted, 'api-') !== 0) {
             error_log('Unable to decrypt api key');
-            // wp_admin_notice('Unable to decrypt your SMTP2GO Api key, likely due to the encryption key changing. Please re-enter your key.', 'error');
             add_action('admin_notices', function () {
-                echo '<div class="notice notice-error ">';
-                echo '<p><strong>Critical!</strong> Unable to decrypt your SMTP2GO Api key, likely due to the encryption key changing. Please re-enter your key.</p>';
+                echo '<div class="notice notice-error">';
+                echo '<p><strong>Critical!</strong> Unable to decrypt your SMTP2GO API key, likely due to the encryption key changing. Please re-enter your key, then re-enable the plugin.</p>';
                 echo '</div>';
             });
+            //disable sending via plugin
+            update_option('smtp2go_enabled',false);
         }
     }
 
@@ -550,7 +551,6 @@ class WordpressPluginAdmin
         if (SettingsHelper::settingHasDefinedConstant('smtp2go_api_key')) {
             echo '<span style="cursor: default; font-weight: normal;">The API key is defined as a constant in your wp-config.php file.</span>';
             if (get_option('smtp2go_api_key')) {
-                //show a delete from db button
                 echo '<br/><a href="javascript:;" class="js-smtp2go_delete_api_key">Delete API Key from Database</a>';
             }
             return;
