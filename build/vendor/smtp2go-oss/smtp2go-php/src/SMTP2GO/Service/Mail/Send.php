@@ -97,6 +97,12 @@ class Send implements BuildsRequest
      */
     protected $version = 1;
     /**
+     * @var int scheduleAt
+     * A unix timestamp to schedule the email for sending in the future.
+     * 
+     */
+    protected $scheduleAt = null;
+    /**
      * endpoint to send to
      *
      * @var string
@@ -143,7 +149,16 @@ class Send implements BuildsRequest
         $body['template_id'] = $this->template_id ?? null;
         $body['template_data'] = $this->template_data ?? null;
         $body['version'] = $this->version;
+        $body['schedule'] = $this->scheduleAt;
         return \array_filter($body);
+    }
+    public function scheduleAt(int $timestamp)
+    {
+        if ($timestamp < \time() || $timestamp > \time() + 3 * 24 * 60 * 60) {
+            throw new \InvalidArgumentException('The timestamp must be a valid unix timestamp in the future, and no more than 3 days from now.');
+        }
+        $this->scheduleAt = $timestamp;
+        return $this;
     }
     public function buildCustomHeaders()
     {

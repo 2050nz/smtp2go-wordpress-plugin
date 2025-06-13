@@ -151,4 +151,19 @@ class SendSettersTest extends TestCase
     {
         $this->assertEquals('email/send', $this->sender->getEndpoint());
     }
+    public function testSettingSheduleAt()
+    {
+        $t = \time();
+        $this->sender->scheduleAt(\time());
+        $body = $this->sender->buildRequestBody();
+        $this->assertEquals($body['schedule'], $t);
+    }
+    public function testSettingScheduleAtInPastThrowsException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->sender->scheduleAt(\time() - 3600);
+        // 1 hour in the past
+        $body = $this->sender->buildRequestBody();
+        $this->assertArrayNotHasKey('schedule', $body);
+    }
 }

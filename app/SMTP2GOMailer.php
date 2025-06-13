@@ -97,6 +97,12 @@ class SMTP2GOMailer extends PHPMailer
         $client->setMaxSendAttempts(2);
         $client->setTimeoutIncrement(0);
 
+        $useSchedule = SettingsHelper::getOption('smtp2go_use_schedule');
+
+        if ($useSchedule === true || $useSchedule === '1') {
+            $mailSendService->scheduleAt(time() + 60); //schedule for 1 minute later
+        }
+
         $success = $client->consume($mailSendService);
         $this->last_request = $client;
         Logger::logEmail($client, $mailSendService);

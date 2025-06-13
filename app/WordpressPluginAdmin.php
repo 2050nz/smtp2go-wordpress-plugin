@@ -313,6 +313,40 @@ class WordpressPluginAdmin
             )
         );
 
+        if (!SettingsHelper::settingHasDefinedConstant('smtp2go_use_schedule')) {
+            register_setting(
+                'api_settings',
+                'smtp2go_use_schedule'
+            );
+
+            add_settings_field(
+                'smtp2go_use_schedule',
+                __('Schedule Emails', $this->plugin_name),
+                array($this, 'outputCheckboxHtml'),
+                $this->plugin_name,
+                'smtp2go_settings_section',
+                array(
+                    'name' => 'smtp2go_use_schedule',
+                    'label' => __('Use SMTP2GO mail schedule feature to send the email 1 minute later.', $this->plugin_name),
+                )
+            );
+        } else {
+            add_settings_field(
+                'smtp2go_use_schedule',
+                __('Schedule Emails', $this->plugin_name),
+                function () {
+                    echo 'Use SMTP2GO mail schedule feature to send the email 1 minute later<br/><br/>';
+                    echo 'This is currently configured via the constant <em>SMTP2GO_USE_SCHEDULE</em> in wp-config.php';
+                    $val = constant('SMTP2GO_USE_SCHEDULE');
+                    echo '<br/>Current value: <strong>' . ($val ? 'true' : 'false') . '</strong>';
+                },
+                $this->plugin_name,
+                'smtp2go_settings_section',
+
+            );
+        }
+
+
         /** from name field */
         register_setting(
             'api_settings',
@@ -353,8 +387,6 @@ class WordpressPluginAdmin
         add_filter('pre_update_option_smtp2go_api_key_update', array($this, 'preUpdateApiKey'));
 
         add_filter('pre_update_option_smtp2go_custom_headers', array($this, 'cleanCustomHeaderOptions'));
-
-
     }
 
 

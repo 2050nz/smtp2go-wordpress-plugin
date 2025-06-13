@@ -7,6 +7,7 @@ class SettingsHelper
 
     private static $fieldToConstantMapping = array(
         'smtp2go_api_key' => 'SMTP2GO_API_KEY',
+        'smtp2go_use_schedule' => 'SMTP2GO_USE_SCHEDULE',
     );
 
     public static function settingHasDefinedConstant($field)
