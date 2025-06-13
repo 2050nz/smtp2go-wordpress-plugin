@@ -34,7 +34,7 @@
                             <?php
                             echo 'Request ID: ' . $res->request_id . '<br>';
                             if (!empty($res->data->schedule_id)) {
-                                echo 'Shedule ID: ' . $res->data->schedule_id . '<br/>';
+                                echo 'Schedule ID: ' . $res->data->schedule_id . '<br/>';
                             }
                             if (isset($res->data->succeeded)) {
                                 echo 'Success: ' . $res->data->succeeded . '<br>';
