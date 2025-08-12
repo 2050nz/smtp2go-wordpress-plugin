@@ -140,6 +140,8 @@ class WordpressPlugin
         $this->loader->addFilter('plugin_action_links_' . SMTP2GO_PLUGIN_BASENAME, $plugin_admin, 'addSettingsLink');
 
         $this->loader->addAction('admin_init', $plugin_admin, 'registerSettings');
+        $this->loader->addAction('admin_init', $plugin_admin, 'getApiKeyPermissions');
+
 
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueStyles');
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueScripts');
