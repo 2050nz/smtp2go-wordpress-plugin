@@ -54,6 +54,8 @@ class WordpressPluginAdmin
      */
     private $keyHelper;
 
+    private $keyPermissions = [];
+
     /**
      * Initialize the class and set its properties.
      *
@@ -725,32 +727,26 @@ class WordpressPluginAdmin
 
     public function getApiKeyPermissions($apiKey = '')
     {
-        // if (session_status() !== PHP_SESSION_ACTIVE) {
-        //     if (!session_start()) {
-        //         return [];
-        //     }
-        // }
         if ($apiKey === '') {
             $apiKey = SettingsHelper::getOption('smtp2go_api_key');
-            $apiKey    = $this->keyHelper->decryptKey($apiKey);
         }
+        $apiKey = $this->keyHelper->decryptKey($apiKey);
+
         $client = new ApiClient($apiKey);
 
         if (empty($apiKey)) {
             return [];
         }
-        // if (isset($_SESSION['smtp2go_api_key_permissions'])) {
-        //     return $_SESSION['smtp2go_api_key_permissions'];
-        // }
+        if (!empty($this->keyPermissions)) {
+            return $this->keyPermissions;
+        }
 
-        $service = new Service('api_keys/permissions');
-        $client->consume($service);
+        $client->consume(new Service('api_keys/permissions'));
         $permissionData = $client->getResponseBody();
         if (isset($permissionData->data) && is_array($permissionData->data)) {
-            //remember for session?
-            // $_SESSION['smtp2go_api_key_permissions'] = $permissionData->data;
-            return $permissionData->data ?? [];
+            $this->keyPermissions = $permissionData->data ?? [];
         }
+        return $this->keyPermissions;
     }
 
     /** input validations */
