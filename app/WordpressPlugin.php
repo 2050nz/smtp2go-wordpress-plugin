@@ -193,7 +193,7 @@ class WordpressPlugin
     public function revalidateApiKey()
     {
         $this->performDailyKeycheckJob();
-        wp_redirect('/wp-admin/admin.php?page=smtp2go-wordpress-plugin');
+        wp_redirect('/wp-admin/admin.php?page=' . $this->plugin_name);
         exit;
     }
 
@@ -229,7 +229,7 @@ class WordpressPlugin
             add_action('admin_notices', function () {
 ?>
                 <div class="notice notice-error">
-                    <p><?php echo __('SMTP2GO plugin has detected an issue with your API key - <a href="/wp-admin/admin.php?page=smtp2go-wordpress-plugin">click here to review.</a>', 'smtp2go-wordpress-plugin'); ?></p>
+                    <p><?php echo __('SMTP2GO plugin has detected an issue with your API key - <a href="/wp-admin/admin.php?page=' . $this->plugin_name .'">click here to review.</a>', $this->plugin_name); ?></p>
                 </div>
 <?php
             });
