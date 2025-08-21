@@ -2,6 +2,9 @@
 
 namespace SMTP2GO\App;
 
+use SMTP2GOWPPlugin\SMTP2GO\ApiClient;
+use SMTP2GOWPPlugin\SMTP2GO\Service\Service;
+
 /**
  * The file that defines the core plugin class
  *
@@ -133,13 +136,14 @@ class WordpressPlugin
         $plugin_admin = new WordpressPluginAdmin($this->getPluginName(), $this->getVersion());
         $this->loader->addAction('admin_action_downloadSmtp2goLogs', $plugin_admin, 'downloadLogs');
         $this->loader->addAction('admin_action_truncateSmtp2goLogs', $plugin_admin, 'truncateLogs');
-
+        $this->loader->addAction('admin_action_revalidateApiKey', $this, 'revalidateApiKey');
 
         $this->loader->addAction('admin_menu', $plugin_admin, 'addMenuPage');
 
         $this->loader->addFilter('plugin_action_links_' . SMTP2GO_PLUGIN_BASENAME, $plugin_admin, 'addSettingsLink');
 
         $this->loader->addAction('admin_init', $plugin_admin, 'registerSettings');
+        $this->loader->addAction('admin_init', $this, 'maybeShowAdminNotice');
 
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueStyles');
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueScripts');
@@ -165,6 +169,71 @@ class WordpressPlugin
     private function definePublicHooks()
     {
         $this->loader->addFilter('wp_mail', $this, 'initMailer');
+        $this->loader->addAction('init', $this, 'registerDailyKeycheckJob');
+        $this->loader->addAction('smtp2go_perform_daily_keycheck_job', $this, 'performDailyKeycheckJob');
+    }
+
+    /**
+     * Register the daily keycheck job with wp_cron
+     * @return void 
+     */
+    public function registerDailyKeycheckJob()
+    {
+        //enable next line for testing/debug
+        // $this->performDailyKeycheckJob();
+
+        if (!wp_next_scheduled('smtp2go_perform_daily_keycheck_job')) {
+            wp_schedule_event(time(), 'daily', 'smtp2go_perform_daily_keycheck_job');
+        }
+    }
+
+    /**
+     * Run the check job from an admin action
+     */
+    public function revalidateApiKey()
+    {
+        $this->performDailyKeycheckJob();
+        wp_redirect('/wp-admin/admin.php?page=smtp2go-wordpress-plugin');
+        exit;
+    }
+
+    /**
+     * Perform the daily keycheck job.
+     */
+    public function performDailyKeycheckJob()
+    {
+        delete_option('smtp2go_display_invalid_key_error');
+        $keyHelper = new SecureApiKeyHelper;
+        $key = $keyHelper->decryptKey(SettingsHelper::getOption('smtp2go_api_key'));
+        if (empty($key)) {
+            return;
+        }
+        $client = new ApiClient($key);
+
+        $client->consume(new Service('api_keys/permissions'));
+        
+        $permissions = $client->getResponseBody();
+
+        if (isset($permissions->data) && is_array($permissions->data)) {
+            if (!in_array('/email/send', $permissions->data)) {
+                add_option('smtp2go_display_invalid_key_error', "API key is valid but is missing required permissions (/email/send). Please check your API key settings in your SMTP2GO account.");
+            }
+        } elseif (isset($permissions->data) && is_object($permissions->data) && isset($permissions->data->error)) {
+            add_option('smtp2go_display_invalid_key_error', $permissions->data->error);
+        }
+    }
+
+    public function maybeShowAdminNotice()
+    {
+        if (get_option('smtp2go_display_invalid_key_error') == true) {
+            add_action('admin_notices', function () {
+?>
+                <div class="notice notice-error">
+                    <p><?php echo __('SMTP2GO plugin has detected an issue with your API key - <a href="/wp-admin/admin.php?page=smtp2go-wordpress-plugin">click here to review.</a>', 'smtp2go-wordpress-plugin'); ?></p>
+                </div>
+<?php
+            });
+        }
     }
 
     /**

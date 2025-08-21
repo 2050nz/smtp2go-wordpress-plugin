@@ -544,6 +544,12 @@ class WordpressPluginAdmin
                 //show a delete from db button
                 echo '<br/><a href="javascript:;" class="js-smtp2go_delete_api_key">Delete API Key from Database</a>';
             }
+            if (false != ($err = get_option('smtp2go_display_invalid_key_error'))) {
+                
+                $url =  admin_url('admin.php?action=revalidateApiKey');
+                echo '<br/><p class="notice notice-error" style="padding:10px">We detected an issue with your API Key. <br/><br/><em>' . $err. '.</em><br/><br/> If you\'ve updated your key please <a href="' . $url . '">recheck</a> to clear the admin message</p>';
+
+            }
             return;
         }
 
