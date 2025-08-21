@@ -37,15 +37,27 @@ if (is_multisite() && !wp_is_large_network()) {
     restore_current_blog();
 } else {
     smtp2go_delete_options();
+    $nextScheduledTimestamp = wp_next_scheduled('smtp2go_perform_daily_keycheck_job');
+    if ($nextScheduledTimestamp) {
+        wp_unschedule_event(
+            $nextScheduledTimestamp,
+            'smtp2go_perform_daily_keycheck_job'
+        );
+    }
 }
 
 function smtp2go_delete_options()
 {
-    foreach (['smtp2go_api_key',
-        'smtp2go_custom_headers',
-        'smtp2go_enabled',
-        'smtp2go_from_address',
-        'smtp2go_from_name'] as $option_name) {
+    foreach (
+        [
+            'smtp2go_api_key',
+            'smtp2go_custom_headers',
+            'smtp2go_enabled',
+            'smtp2go_from_address',
+            'smtp2go_display_invalid_key_error',
+            'smtp2go_from_name'
+        ] as $option_name
+    ) {
         delete_option($option_name);
     }
 }
