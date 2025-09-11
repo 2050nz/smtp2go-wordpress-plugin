@@ -607,10 +607,11 @@ class WordpressPluginAdmin
     {
         $apiKey = SettingsHelper::getOption('smtp2go_api_key');
         $apiKeyHelper = new SecureApiKeyHelper();
-        $client = new ApiClient($apiKeyHelper->decryptKey($apiKey));
+        $decryptedKey = $apiKeyHelper->decryptKey($apiKey);
+        $client = new ApiClient($decryptedKey);
         $stats   = null;
 
-        if ($this->hasEndpointPermission('/stats/email_summary') && $client->consume(new Service('stats/email_summary', ['username' => substr($apiKey, 0, 16)]))) {
+        if ($this->hasEndpointPermission('/stats/email_summary') && $client->consume(new Service('stats/email_summary', ['username' => substr($decryptedKey, 0, 16)]))) {
             $stats = $client->getResponseBody()->data;
         }
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/smtp2go-wordpress-plugin-stats-display.php';
@@ -734,6 +735,7 @@ class WordpressPluginAdmin
 
         $client = new ApiClient($apiKey);
 
+        // WIP - what is this for?
         if (empty($apiKey)) {
             return [];
         }
