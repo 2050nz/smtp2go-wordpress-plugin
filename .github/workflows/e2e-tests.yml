@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-22.04
     environment: Test
     strategy:
+      max-parallel: 1
       matrix:
-        max-parallel: 1
         php-version: [7.4, 8.1, 8.2, 8.3]
     steps:
       - name: Checkout code
