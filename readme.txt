@@ -139,6 +139,9 @@ Our data centers are located around the world, meaning lightning-fast connection
 
 == Changelog ==
 
+= v1.13.0 =
+* better handling of API key permissions
+* make stats permission optional
 = v1.12.2 =
 * lock down admin URL's
 = v1.12.1 =
