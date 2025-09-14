@@ -15,6 +15,7 @@ jobs:
     environment: Test
     strategy:
       matrix:
+        max-parallel: 1
         php-version: [7.4, 8.1, 8.2, 8.3]
     steps:
       - name: Checkout code
