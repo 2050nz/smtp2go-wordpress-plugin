@@ -735,7 +735,7 @@ class WordpressPluginAdmin
 
         $client = new ApiClient($apiKey);
 
-        // WIP - what is this for?
+        // what is this for?
         if (empty($apiKey)) {
             return [];
         }

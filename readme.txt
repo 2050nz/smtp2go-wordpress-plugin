@@ -142,6 +142,7 @@ Our data centers are located around the world, meaning lightning-fast connection
 = v1.13.0 =
 * better handling of API key permissions
 * make stats permission optional
+* update smtp2go composer package to better handle rate limiter and api authentication
 = v1.12.2 =
 * lock down admin URL's
 = v1.12.1 =
