@@ -560,7 +560,7 @@ class WordpressPluginAdmin
         $secureHelper = new SecureApiKeyHelper();
 
         $setting = $secureHelper->decryptKey($setting);
-        $hint    = '<span style="cursor: default; font-weight: normal;">The API key will need permissions <i>Emails</i> and <i>Statistics.</i></span>';
+        $hint    = '<span style="cursor: default; font-weight: normal;">The API key will need permissions <i>/email/send</i> and optionally <i>/stats/email_summary</i>.</span>';
         if (empty($setting)) {
             $this->outputTextFieldHtml(array(
                 'name'     => 'smtp2go_api_key',
