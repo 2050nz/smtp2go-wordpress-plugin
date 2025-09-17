@@ -139,6 +139,8 @@ Our data centers are located around the world, meaning lightning-fast connection
 
 == Changelog ==
 
+= v1.13.1 =
+* remove unnecessary API key permission check
 = v1.13.0 =
 * better handling of API key permissions
 * make stats permission optional
