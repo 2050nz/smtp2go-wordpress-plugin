@@ -4,13 +4,13 @@ namespace SMTP2GO\App;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use SMTP2GOWPPlugin\SMTP2GO\ApiClient;
-use SMTP2GOWPPlugin\SMTP2GO\Collections\Mail\AddressCollection;
-use SMTP2GOWPPlugin\SMTP2GO\Collections\Mail\AttachmentCollection;
 use SMTP2GOWPPlugin\SMTP2GO\Service\Mail\Send;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Address;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Attachment;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\CustomHeader;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\InlineAttachment;
+use SMTP2GOWPPlugin\SMTP2GO\Collections\Mail\AddressCollection;
+use SMTP2GOWPPlugin\SMTP2GO\Collections\Mail\AttachmentCollection;
 
 require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
 require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
@@ -145,18 +145,32 @@ class SMTP2GOMailer extends PHPMailer
             $inlines     = new AttachmentCollection;
             $attachments = new AttachmentCollection;
             foreach ($this->getAttachments() as $phpmailerAttachementItem) {
-                if (self::fileIsAccessible($phpmailerAttachementItem[0])) {
-                    $attachments->add(new Attachment($phpmailerAttachementItem[0]));
+                if (
+                    self::fileIsAccessible($phpmailerAttachementItem[0])
+                    && $phpmailerAttachementItem[6] === 'attachment'
+
+                ) {
+                    $attachments->add(new Attachment(
+                        $phpmailerAttachementItem[0],
+                        $phpmailerAttachementItem[2] ?: basename($phpmailerAttachementItem[0]),
+                    ));
                 } else {
-                    if (!empty($phpmailerAttachementItem[7]) && is_string($phpmailerAttachementItem[7])) {
+                    if (
+                        !empty($phpmailerAttachementItem[7])
+                        && $phpmailerAttachementItem[6] === 'inline'
+                        && self::fileIsAccessible($phpmailerAttachementItem[0])
+                        && is_string($phpmailerAttachementItem[7])
+                    ) {
                         $inlines->add(new InlineAttachment(
                             $phpmailerAttachementItem[7],
-                            $phpmailerAttachementItem[0],
+                            file_get_contents($phpmailerAttachementItem[0]),
                             $phpmailerAttachementItem[4]
                         ));
                     }
                 }
             }
+
+
             $mailSendService->setAttachments($attachments);
             $mailSendService->setInlines($inlines);
         }
