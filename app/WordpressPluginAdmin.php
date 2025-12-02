@@ -685,10 +685,19 @@ class WordpressPluginAdmin
         if (empty($to_email)) {
             wp_send_json(array('success' => 0, 'reason' => 'Invalid recipient specified'));
         }
-        $body = __('Success!', $this->plugin_name) . "\n";
-        $body .= __('You have successfully set up your SMTP2GO Wordpress Plugin', $this->plugin_name);
+        $body = '<img src="cid:logo" alt="Logo"><br/>';
+        $body .= __('Success!', $this->plugin_name) . "\n";
+        //<html><body><img src="cid:logo" alt="Logo"><hr/> <h1>You have successfully set up your SMTP2GO Wordpress Plugin</h1></body></html>
+        $body .= __('<br/>You have successfully set up your SMTP2GO Wordpress Plugin', $this->plugin_name);
 
-        $success = wp_mail($to_email, __('Test Email Via SMTP2GO Wordpress Plugin', $this->plugin_name), $body);
+        $success = wp_mail(
+            $to_email,
+            __('Test Email Via SMTP2GO Wordpress Plugin', $this->plugin_name),
+            $body,
+            '',
+            ['test_logo.svg' => plugin_dir_path(dirname(__FILE__)) . 'smtp2go-logo-alt.svg'],
+            ['logo' => plugin_dir_path(dirname(__FILE__)) . 'SMTP2GO_logo.png']
+        );
 
         Logger::errorLog('PHPMAILER Instance: ' . print_r($phpmailer, 1));
 
