@@ -2,7 +2,7 @@
 Contributors: 2050nz, greatsaltlake
 Tags: email, smtp, inbox, delivery, wp_mail
 Requires at least: 6.2
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 1.13.1
 License: GPLv2 or later
@@ -139,6 +139,8 @@ Our data centers are located around the world, meaning lightning-fast connection
 
 == Changelog ==
 
+= v1.14.0 =
+* check WordPress 6.9 compatibility
 = v1.13.1 =
 * remove unnecessary API key permission check
 = v1.13.0 =
