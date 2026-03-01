@@ -675,7 +675,7 @@ class WordpressPluginAdmin
 
         $to_email = $to_name = null;
 
-        if (!empty($_POST['to_email']) && filter_var($_POST['to_email'], FILTER_VALIDATE_EMAIL)) {
+        if (!empty($_POST['to_email']) && is_email($_POST['to_email'])) {
             $to_email = sanitize_email($_POST['to_email']);
         }
         if (!empty($_POST['to_name'])) {
