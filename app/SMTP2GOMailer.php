@@ -90,13 +90,11 @@ class SMTP2GOMailer extends PHPMailer
             ));
         }
 
-        $apiKey = SettingsHelper::getOption('smtp2go_api_key');
 
-        $keyHelper = new SecureApiKeyHelper();
         // makeApiClient() applies the configured API region (and the
         // `smtp2go_api_region` filter) to the new client. If a client has
         // already been injected via setApiClient() we leave it alone.
-        $client = $this->apiClient ?? SettingsHelper::makeApiClient($keyHelper->decryptKey($apiKey));
+        $client = $this->apiClient ?? ApiClientFactory::create();
         $client->setMaxSendAttempts(2);
         $client->setTimeoutIncrement(0);
 
