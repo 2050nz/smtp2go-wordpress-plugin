@@ -5,6 +5,7 @@ namespace SMTP2GOWPPlugin\SMTP2GO\Collections\Mail;
 use InvalidArgumentException;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Address;
 use SMTP2GOWPPlugin\SMTP2GO\Collections\Collection;
+/** @internal */
 class AddressCollection extends Collection
 {
     protected $items;
@@ -24,7 +25,7 @@ class AddressCollection extends Collection
         if (\is_a($address, Address::class)) {
             $this->items[] = $address;
         } else {
-            throw new InvalidArgumentException('This collection expects objects of type ' . Address::class, ' but recieved ' . \get_class($address));
+            throw new InvalidArgumentException('This collection expects objects of type ' . Address::class, ' but received ' . \get_class($address));
         }
         return $this;
     }

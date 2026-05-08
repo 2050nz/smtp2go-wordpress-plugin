@@ -21,9 +21,15 @@ use SMTP2GOWPPlugin\Composer\Semver\VersionParser;
  * To require its presence, you can require `composer-runtime-api ^2.0`
  *
  * @final
+ * @internal
  */
 class InstalledVersions
 {
+    /**
+     * @var string|null if set (by reflection by Composer), this should be set to the path where this class is being copied to
+     * @internal
+     */
+    private static $selfDir = null;
     /**
      * @var mixed[]|null
      * @psalm-var array{root: array{name: string, pretty_version: string, version: string, reference: string|null, type: string, install_path: string, aliases: string[], dev: bool}, versions: array<string, array{pretty_version?: string, version?: string, reference?: string|null, type?: string, install_path?: string, aliases?: string[], dev_requirement: bool, replaced?: string[], provided?: string[]}>}|array{}|null
@@ -57,7 +63,7 @@ class InstalledVersions
         if (1 === \count($packages)) {
             return $packages[0];
         }
-        return \array_keys(\array_flip(\call_user_func_array('array_merge', $packages)));
+        return \array_keys(\array_flip(\call_user_func_array('SMTP2GOWPPlugin\\array_merge', $packages)));
     }
     /**
      * Returns a list of all package names with a specific type e.g. 'library'
@@ -280,6 +286,16 @@ class InstalledVersions
         self::$installedIsLocalDir = \false;
     }
     /**
+     * @return string
+     */
+    private static function getSelfDir()
+    {
+        if (self::$selfDir === null) {
+            self::$selfDir = \strtr(__DIR__, '\\', '/');
+        }
+        return self::$selfDir;
+    }
+    /**
      * @return array[]
      * @psalm-return list<array{root: array{name: string, pretty_version: string, version: string, reference: string|null, type: string, install_path: string, aliases: string[], dev: bool}, versions: array<string, array{pretty_version?: string, version?: string, reference?: string|null, type?: string, install_path?: string, aliases?: string[], dev_requirement: bool, replaced?: string[], provided?: string[]}>}>
      */
@@ -291,7 +307,7 @@ class InstalledVersions
         $installed = array();
         $copiedLocalDir = \false;
         if (self::$canGetVendors) {
-            $selfDir = \strtr(__DIR__, '\\', '/');
+            $selfDir = self::getSelfDir();
             foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $loader) {
                 $vendorDir = \strtr($vendorDir, '\\', '/');
                 if (isset(self::$installedByVendor[$vendorDir])) {

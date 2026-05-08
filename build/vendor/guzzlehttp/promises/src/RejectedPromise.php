@@ -10,6 +10,7 @@ namespace SMTP2GOWPPlugin\GuzzleHttp\Promise;
  * immediately and ignore other callbacks.
  *
  * @final
+ * @internal
  */
 class RejectedPromise implements PromiseInterface
 {

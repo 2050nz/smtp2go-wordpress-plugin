@@ -6,6 +6,7 @@ namespace SMTP2GOWPPlugin\GuzzleHttp\Psr7;
 use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
 /**
  * Decorator used to return only a subset of a stream.
+ * @internal
  */
 final class LimitStream implements StreamInterface
 {
@@ -50,9 +51,8 @@ final class LimitStream implements StreamInterface
             return null;
         } elseif ($this->limit === -1) {
             return $length - $this->offset;
-        } else {
-            return \min($this->limit, $length - $this->offset);
         }
+        return \min($this->limit, $length - $this->offset);
     }
     /**
      * Allow for a bounded seek on the read limited stream

@@ -2,6 +2,7 @@
 
 namespace SMTP2GOWPPlugin\Psr\Http\Message;
 
+/** @internal */
 interface ServerRequestFactoryInterface
 {
     /**

@@ -4,6 +4,7 @@ namespace SMTP2GOWPPlugin\GuzzleHttp\Cookie;
 
 /**
  * Set-Cookie object
+ * @internal
  */
 class SetCookie
 {

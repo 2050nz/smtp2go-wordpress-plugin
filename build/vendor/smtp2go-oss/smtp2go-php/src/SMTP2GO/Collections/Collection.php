@@ -2,7 +2,8 @@
 
 namespace SMTP2GOWPPlugin\SMTP2GO\Collections;
 
-class Collection implements \ArrayAccess, \Iterator
+/** @internal */
+class Collection implements \ArrayAccess, \Iterator, \Countable
 {
     protected $items;
     protected $position;
@@ -76,5 +77,10 @@ class Collection implements \ArrayAccess, \Iterator
     public function valid() : bool
     {
         return isset($this->items[$this->position]);
+    }
+    /** @return int  */
+    public function count() : int
+    {
+        return \count($this->items);
     }
 }

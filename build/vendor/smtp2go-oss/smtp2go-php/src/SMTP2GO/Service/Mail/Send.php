@@ -14,6 +14,7 @@ use SMTP2GOWPPlugin\SMTP2GO\Collections\Mail\AttachmentCollection;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\CustomHeader;
 /**
  * Constructs the payload for sending email through the SMTP2GO Api
+ * @internal
  */
 class Send implements BuildsRequest
 {
@@ -68,7 +69,7 @@ class Send implements BuildsRequest
     /**
      * The template data to use which is key value pairs of [placeholder => replacement]
      * @link https://app-us.smtp2go.com/settings/templates/
-     * @var array
+     * @var array|null
      */
     protected $template_data;
     /**
@@ -96,6 +97,12 @@ class Send implements BuildsRequest
      * 
      */
     protected $version = 1;
+    /**
+     * @var int scheduleAt
+     * A unix timestamp to schedule the email for sending in the future.
+     * 
+     */
+    protected $scheduleAt = null;
     /**
      * endpoint to send to
      *
@@ -143,7 +150,16 @@ class Send implements BuildsRequest
         $body['template_id'] = $this->template_id ?? null;
         $body['template_data'] = $this->template_data ?? null;
         $body['version'] = $this->version;
+        $body['schedule'] = $this->scheduleAt;
         return \array_filter($body);
+    }
+    public function scheduleAt(int $timestamp)
+    {
+        if ($timestamp < \time() || $timestamp > \time() + 3 * 24 * 60 * 60) {
+            throw new \InvalidArgumentException('The timestamp must be a valid unix timestamp in the future, and no more than 3 days from now.');
+        }
+        $this->scheduleAt = $timestamp;
+        return $this;
     }
     public function buildCustomHeaders()
     {
@@ -161,7 +177,7 @@ class Send implements BuildsRequest
      */
     public function buildAttachments() : array
     {
-        if (empty($this->attachments)) {
+        if ($this->attachments->count() === 0) {
             return [];
         }
         $attachments = [];
@@ -177,7 +193,7 @@ class Send implements BuildsRequest
      */
     public function buildInlines() : array
     {
-        if (empty($this->inlines)) {
+        if ($this->inlines->count() === 0) {
             return [];
         }
         $inlines = [];
@@ -218,9 +234,8 @@ class Send implements BuildsRequest
     /**
      * Add a custom header
      *
-     * @param string $headerName
-     * @param string $headerValue
-     * @return void
+     * @param  CustomHeader $header
+     * @return Send
      */
     public function addCustomHeader(CustomHeader $header) : Send
     {
@@ -230,7 +245,7 @@ class Send implements BuildsRequest
     /**
      * Get sender
      *
-     * @return  string
+     * @return string
      */
     public function getSender() : string
     {
@@ -288,7 +303,7 @@ class Send implements BuildsRequest
     /**
      * Set the email message
      *
-     * @param  string  $message  The email message
+     * @param  string  $htmlBody  The email message
      *
      * @return Send
      */
@@ -323,7 +338,7 @@ class Send implements BuildsRequest
      * add multiple addresses of a specified type
      *
      * @param string $addressType either 'to', 'cc', 'bcc'
-     * @param array $addresses the array should contain multiple arrays with 1 or 2 values with email address and optional name
+     * @param AddressCollection $addresses the array should contain multiple arrays with 1 or 2 values with email address and optional name
      * @return Send
      */
     public function addAddresses(string $addressType, AddressCollection $addresses) : Send
@@ -337,8 +352,7 @@ class Send implements BuildsRequest
      * add a single addresses of a specified type
      *
      * @param string $addressType either 'to', 'cc', 'bcc'
-     * @param string $email
-     * @param string $name
+     * @param Address $address
      * @return Send
      */
     public function addAddress(string $addressType, Address $address) : Send
@@ -381,9 +395,9 @@ class Send implements BuildsRequest
     /**
      * Get the CC'd recipients. This clears any previously added CC addresses
      *
-     * @return  AddressCollection
+     * @return array
      */
-    public function getCc()
+    public function getCc() : array
     {
         return $this->cc;
     }

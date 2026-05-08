@@ -10,6 +10,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
  * an HTTP handler function.
  *
  * @final
+ * @internal
  */
 class HandlerStack
 {

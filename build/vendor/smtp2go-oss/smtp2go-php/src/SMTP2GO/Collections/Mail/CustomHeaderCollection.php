@@ -4,6 +4,7 @@ namespace SMTP2GOWPPlugin\SMTP2GO\Collections\Mail;
 
 use SMTP2GOWPPlugin\SMTP2GO\Collections\Collection;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\CustomHeader;
+/** @internal */
 class CustomHeaderCollection extends Collection
 {
     /**
@@ -42,7 +43,7 @@ class CustomHeaderCollection extends Collection
                 }
             }
         } else {
-            throw new \InvalidArgumentException('This collection expects objects of type ' . CustomHeader::class, ' but recieved ' . \get_class($header));
+            throw new \InvalidArgumentException('This collection expects objects of type ' . CustomHeader::class, ' but received ' . \get_class($header));
         }
         return $this;
     }

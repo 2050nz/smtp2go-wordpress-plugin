@@ -16,6 +16,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\UriInterface;
  * Creates curl resources from a request
  *
  * @final
+ * @internal
  */
 class CurlFactory implements CurlFactoryInterface
 {

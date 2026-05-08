@@ -2,6 +2,7 @@
 
 namespace SMTP2GOWPPlugin\SMTP2GO\Contracts;
 
+/** @internal */
 interface BuildsRequest
 {
     /**

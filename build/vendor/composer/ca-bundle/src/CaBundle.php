@@ -15,6 +15,7 @@ use SMTP2GOWPPlugin\Symfony\Component\Process\PhpProcess;
 /**
  * @author Chris Smith <chris@cs278.org>
  * @author Jordi Boggiano <j.boggiano@seld.be>
+ * @internal
  */
 class CaBundle
 {

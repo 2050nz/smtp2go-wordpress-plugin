@@ -3,6 +3,7 @@
 namespace SMTP2GOWPPlugin\SMTP2GO\Types\Mail;
 
 use SMTP2GOWPPlugin\SMTP2GO\Mime\Detector;
+/** @internal */
 class Attachment
 {
     /**

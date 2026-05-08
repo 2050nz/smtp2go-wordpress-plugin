@@ -11,6 +11,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\UriInterface;
  * @author Michael Dowling
  * @author Tobias Schultze
  * @author Matthew Weier O'Phinney
+ * @internal
  */
 class Uri implements UriInterface, \JsonSerializable
 {
@@ -34,7 +35,7 @@ class Uri implements UriInterface, \JsonSerializable
      * @see https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
      */
     private const CHAR_SUB_DELIMS = '!\\$&\'\\(\\)\\*\\+,;=';
-    private const QUERY_SEPARATORS_REPLACEMENT = ['=' => '%3D', '&' => '%26'];
+    private const QUERY_SEPARATORS_REPLACEMENT = ['=' => '%3D', '&' => '%26', '+' => '%2B'];
     /** @var string Uri scheme. */
     private $scheme = '';
     /** @var string Uri user info. */
@@ -508,7 +509,8 @@ class Uri implements UriInterface, \JsonSerializable
     }
     private static function generateQueryString(string $key, ?string $value) : string
     {
-        // Query string separators ("=", "&") within the key or value need to be encoded
+        // Query string separators ("=", "&") and literal plus signs ("+") within the
+        // key or value need to be encoded
         // (while preventing double-encoding) before setting the query string. All other
         // chars that need percent-encoding will be encoded by withQuery().
         $queryString = \strtr($key, self::QUERY_SEPARATORS_REPLACEMENT);

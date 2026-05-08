@@ -7,6 +7,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
 /**
  * PSR-7 response implementation.
+ * @internal
  */
 class Response implements ResponseInterface
 {

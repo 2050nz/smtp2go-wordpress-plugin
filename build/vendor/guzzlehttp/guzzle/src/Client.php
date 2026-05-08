@@ -12,6 +12,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\UriInterface;
 /**
  * @final
+ * @internal
  */
 class Client implements ClientInterface, \SMTP2GOWPPlugin\Psr\Http\Client\ClientInterface
 {

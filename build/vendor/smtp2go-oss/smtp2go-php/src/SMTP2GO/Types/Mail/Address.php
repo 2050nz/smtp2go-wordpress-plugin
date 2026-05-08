@@ -2,6 +2,7 @@
 
 namespace SMTP2GOWPPlugin\SMTP2GO\Types\Mail;
 
+/** @internal */
 class Address
 {
     protected $email;

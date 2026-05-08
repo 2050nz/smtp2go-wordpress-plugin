@@ -6,6 +6,7 @@ namespace SMTP2GOWPPlugin\GuzzleHttp\Psr7;
 use SMTP2GOWPPlugin\Psr\Http\Message\MessageInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
+/** @internal */
 final class Message
 {
     /**

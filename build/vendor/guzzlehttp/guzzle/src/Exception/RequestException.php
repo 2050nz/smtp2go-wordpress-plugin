@@ -9,6 +9,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
 /**
  * HTTP Request exception
+ * @internal
  */
 class RequestException extends TransferException implements RequestExceptionInterface
 {

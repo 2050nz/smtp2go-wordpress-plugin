@@ -18,6 +18,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\UriInterface;
  * HTTP handler that uses PHP's HTTP stream wrapper.
  *
  * @final
+ * @internal
  */
 class StreamHandler
 {

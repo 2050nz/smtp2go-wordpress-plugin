@@ -9,6 +9,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\UriInterface;
 /**
  * PSR-7 request implementation.
+ * @internal
  */
 class Request implements RequestInterface
 {

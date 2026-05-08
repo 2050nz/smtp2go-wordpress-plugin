@@ -9,6 +9,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
  * Provides basic proxies for handlers.
  *
  * @final
+ * @internal
  */
 class Proxy
 {

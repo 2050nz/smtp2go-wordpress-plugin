@@ -16,6 +16,7 @@ use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
  * **curl** key of the provided request options.
  *
  * @final
+ * @internal
  */
 class CurlMultiHandler
 {

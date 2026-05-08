@@ -5,6 +5,7 @@ namespace SMTP2GOWPPlugin\SMTP2GO\Mime;
 /**
  * Credit to https://github.com/thephpleague/mime-type-detection for the  
  * MIME_TYPES_FOR_EXTENSIONS
+ * @internal
  */
 class Detector
 {

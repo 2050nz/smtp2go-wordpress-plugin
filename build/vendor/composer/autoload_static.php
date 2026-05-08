@@ -13,7 +13,7 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
     );
 
     public static $prefixLengthsPsr4 = array (
-        'S' => 
+        'S' =>
         array (
             'SMTP2GOWPPlugin\\SMTP2GO\\' => 24,
             'SMTP2GOWPPlugin\\Psr\\Http\\Message\\' => 33,
@@ -26,32 +26,32 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
     );
 
     public static $prefixDirsPsr4 = array (
-        'SMTP2GOWPPlugin\\SMTP2GO\\' => 
+        'SMTP2GOWPPlugin\\SMTP2GO\\' =>
         array (
             0 => __DIR__ . '/..' . '/smtp2go-oss/smtp2go-php/src/SMTP2GO',
         ),
-        'SMTP2GOWPPlugin\\Psr\\Http\\Message\\' => 
+        'SMTP2GOWPPlugin\\Psr\\Http\\Message\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
             1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'SMTP2GOWPPlugin\\Psr\\Http\\Client\\' => 
+        'SMTP2GOWPPlugin\\Psr\\Http\\Client\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
-        'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\' => 
+        'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'SMTP2GOWPPlugin\\GuzzleHttp\\Promise\\' => 
+        'SMTP2GOWPPlugin\\GuzzleHttp\\Promise\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'SMTP2GOWPPlugin\\GuzzleHttp\\' => 
+        'SMTP2GOWPPlugin\\GuzzleHttp\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'SMTP2GOWPPlugin\\Composer\\CaBundle\\' => 
+        'SMTP2GOWPPlugin\\Composer\\CaBundle\\' =>
         array (
             0 => __DIR__ . '/..' . '/composer/ca-bundle/src',
         ),
