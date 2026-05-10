@@ -168,7 +168,7 @@ class SMTP2GOMailer extends PHPMailer
      */
     private function processCustomHeaders(Send $mailSendService)
     {
-        $raw_custom_headers =  \SMTP2GO\App\SettingsHelper::getOption('smtp2go_custom_headers');
+        $raw_custom_headers =  SettingsHelper::getOption('smtp2go_custom_headers');
 
         if (!empty($raw_custom_headers['header'])) {
             foreach ($raw_custom_headers['header'] as $index => $header) {
