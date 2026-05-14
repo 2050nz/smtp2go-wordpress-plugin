@@ -5,7 +5,6 @@ namespace SMTP2GOWPPlugin\GuzzleHttp\Promise;
 
 /**
  * Exception thrown when too many errors occur in the some() or any() methods.
- * @internal
  */
 class AggregateException extends RejectionException
 {

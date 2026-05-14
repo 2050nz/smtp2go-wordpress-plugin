@@ -2,7 +2,6 @@
 
 namespace SMTP2GOWPPlugin\SMTP2GO\Service\Mail;
 
-use SMTP2GOWPPlugin\SMTP2GO\Mime\Detector;
 use InvalidArgumentException;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Address;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Attachment;
@@ -12,9 +11,9 @@ use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\InlineAttachment;
 use SMTP2GOWPPlugin\SMTP2GO\Collections\Mail\AddressCollection;
 use SMTP2GOWPPlugin\SMTP2GO\Collections\Mail\AttachmentCollection;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\CustomHeader;
+use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\FileAttachment;
 /**
  * Constructs the payload for sending email through the SMTP2GO Api
- * @internal
  */
 class Send implements BuildsRequest
 {
@@ -90,10 +89,9 @@ class Send implements BuildsRequest
      * @var AttachmentCollection
      */
     protected $inlines;
-    /**
+    /**      
      * @var int version
-     * The version parameter specifies which version (structure) to use when generating the email
-     * @see https://apidoc.smtp2go.com/documentation/#/POST%20/email/send
+     * @deprecated 
      * 
      */
     protected $version = 1;
@@ -103,6 +101,11 @@ class Send implements BuildsRequest
      * 
      */
     protected $scheduleAt = null;
+    /**
+     * If true, the email will be accepted immediately and sent in a background process. Use webhooks if you need information about final delivery to the recipient. This will soon become the default method of sending via API.
+     * @var bool
+     */
+    protected $fastaccept = \false;
     /**
      * endpoint to send to
      *
@@ -151,6 +154,7 @@ class Send implements BuildsRequest
         $body['template_data'] = $this->template_data ?? null;
         $body['version'] = $this->version;
         $body['schedule'] = $this->scheduleAt;
+        $body['fastaccept'] = $this->fastaccept;
         return \array_filter($body);
     }
     public function scheduleAt(int $timestamp)
@@ -423,11 +427,11 @@ class Send implements BuildsRequest
     {
         return $this->attachments;
     }
-    public function addAttachment(Attachment $attachment) : Send
+    public function addAttachment($attachment) : Send
     {
         if (\is_a($attachment, InlineAttachment::class)) {
             $this->inlines[] = $attachment;
-        } else {
+        } elseif (\is_a($attachment, FileAttachment::class) || \is_a($attachment, Attachment::class)) {
             $this->attachments[] = $attachment;
         }
         return $this;
@@ -555,6 +559,27 @@ class Send implements BuildsRequest
     public function setVersion(int $version)
     {
         $this->version = $version;
+        return $this;
+    }
+    /**
+     * 
+     *
+     * @return  bool
+     */
+    public function getFastaccept()
+    {
+        return $this->fastaccept;
+    }
+    /**
+     * 
+     *
+     * @param  bool  $fastaccept
+     *
+     * @return  self
+     */
+    public function setFastaccept(bool $fastaccept)
+    {
+        $this->fastaccept = $fastaccept;
         return $this;
     }
 }

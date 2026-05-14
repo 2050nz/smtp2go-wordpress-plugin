@@ -4,7 +4,6 @@ namespace SMTP2GOWPPlugin\Psr\Http\Client;
 
 use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
-/** @internal */
 interface ClientInterface
 {
     /**

@@ -3,7 +3,6 @@
 namespace SMTP2GOWPPlugin\GuzzleHttp\Handler;
 
 use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
-/** @internal */
 interface CurlFactoryInterface
 {
     /**

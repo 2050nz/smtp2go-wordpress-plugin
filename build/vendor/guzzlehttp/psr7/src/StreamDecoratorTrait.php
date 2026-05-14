@@ -8,7 +8,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
  * Stream decorator trait
  *
  * @property StreamInterface $stream
- * @internal
  */
 trait StreamDecoratorTrait
 {

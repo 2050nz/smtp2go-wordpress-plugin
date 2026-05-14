@@ -4,7 +4,6 @@ namespace SMTP2GOWPPlugin\SMTP2GO\Collections\Mail;
 
 use SMTP2GOWPPlugin\SMTP2GO\Collections\Collection;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\CustomHeader;
-/** @internal */
 class CustomHeaderCollection extends Collection
 {
     /**

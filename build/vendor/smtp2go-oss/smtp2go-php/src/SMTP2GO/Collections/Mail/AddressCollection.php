@@ -5,7 +5,6 @@ namespace SMTP2GOWPPlugin\SMTP2GO\Collections\Mail;
 use InvalidArgumentException;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Address;
 use SMTP2GOWPPlugin\SMTP2GO\Collections\Collection;
-/** @internal */
 class AddressCollection extends Collection
 {
     protected $items;

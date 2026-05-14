@@ -4,7 +4,6 @@ namespace SMTP2GOWPPlugin\GuzzleHttp;
 
 use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
-/** @internal */
 interface MessageFormatterInterface
 {
     /**

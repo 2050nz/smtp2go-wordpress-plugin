@@ -9,7 +9,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\UriInterface;
 /**
  * Client interface for sending HTTP requests.
- * @internal
  */
 interface ClientInterface
 {

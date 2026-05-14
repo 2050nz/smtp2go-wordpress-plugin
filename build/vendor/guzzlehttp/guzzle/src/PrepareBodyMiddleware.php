@@ -9,7 +9,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
  * Content-Type, and Expect headers.
  *
  * @final
- * @internal
  */
 class PrepareBodyMiddleware
 {

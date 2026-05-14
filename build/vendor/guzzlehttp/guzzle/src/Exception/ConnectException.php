@@ -8,7 +8,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
  * Exception thrown when a connection cannot be established.
  *
  * Note that no response is present for a ConnectException
- * @internal
  */
 class ConnectException extends TransferException implements NetworkExceptionInterface
 {

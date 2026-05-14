@@ -5,7 +5,6 @@ namespace SMTP2GOWPPlugin\SMTP2GO\Collections\Mail;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\Attachment;
 use SMTP2GOWPPlugin\SMTP2GO\Collections\Collection;
 use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\FileAttachment;
-/** @internal */
 class AttachmentCollection extends Collection
 {
     protected $items = [];

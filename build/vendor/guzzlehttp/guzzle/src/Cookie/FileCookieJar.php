@@ -5,7 +5,6 @@ namespace SMTP2GOWPPlugin\GuzzleHttp\Cookie;
 use SMTP2GOWPPlugin\GuzzleHttp\Utils;
 /**
  * Persists non-session cookies using a JSON formatted file
- * @internal
  */
 class FileCookieJar extends CookieJar
 {

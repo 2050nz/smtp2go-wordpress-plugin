@@ -11,7 +11,6 @@ namespace SMTP2GOWPPlugin\GuzzleHttp\Promise;
  * the reason why the promise cannot be fulfilled.
  *
  * @see https://promisesaplus.com/
- * @internal
  */
 interface PromiseInterface
 {

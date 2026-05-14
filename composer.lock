@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a5d55d7733af0ed2fc19a07506edf191",
+    "content-hash": "f99d446a2f429e050fe4c9d86336431c",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -610,16 +610,16 @@
         },
         {
             "name": "smtp2go-oss/smtp2go-php",
-            "version": "dev-development",
+            "version": "1.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/smtp2go-oss/smtp2go-php.git",
-                "reference": "6ff15b31830f535679d9dbb6cb080097e379fb93"
+                "reference": "f079340d25ac8e1d716df90ba79fc0810f14f160"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smtp2go-oss/smtp2go-php/zipball/6ff15b31830f535679d9dbb6cb080097e379fb93",
-                "reference": "6ff15b31830f535679d9dbb6cb080097e379fb93",
+                "url": "https://api.github.com/repos/smtp2go-oss/smtp2go-php/zipball/f079340d25ac8e1d716df90ba79fc0810f14f160",
+                "reference": "f079340d25ac8e1d716df90ba79fc0810f14f160",
                 "shasum": ""
             },
             "require": {
@@ -631,7 +631,6 @@
                 "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^9.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -645,9 +644,9 @@
             "description": "A library for sending email through the SMTP2GO Api",
             "support": {
                 "issues": "https://github.com/smtp2go-oss/smtp2go-php/issues",
-                "source": "https://github.com/smtp2go-oss/smtp2go-php/tree/dev"
+                "source": "https://github.com/smtp2go-oss/smtp2go-php/tree/1.1.8"
             },
-            "time": "2026-05-08T02:22:28+00:00"
+            "time": "2026-05-11T21:23:22+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -720,9 +719,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "smtp2go-oss/smtp2go-php": 20
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {},

@@ -8,7 +8,6 @@ namespace SMTP2GOWPPlugin\GuzzleHttp\Promise;
  * side-effect functions in the process.
  *
  * @final
- * @internal
  */
 class EachPromise implements PromisorInterface
 {

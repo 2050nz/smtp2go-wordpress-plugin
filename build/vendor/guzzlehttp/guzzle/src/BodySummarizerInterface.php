@@ -3,7 +3,6 @@
 namespace SMTP2GOWPPlugin\GuzzleHttp;
 
 use SMTP2GOWPPlugin\Psr\Http\Message\MessageInterface;
-/** @internal */
 interface BodySummarizerInterface
 {
     /**

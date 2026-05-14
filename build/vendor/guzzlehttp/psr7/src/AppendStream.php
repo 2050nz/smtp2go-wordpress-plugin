@@ -8,7 +8,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
  * Reads from multiple streams, one after the other.
  *
  * This is a read-only stream decorator.
- * @internal
  */
 final class AppendStream implements StreamInterface
 {

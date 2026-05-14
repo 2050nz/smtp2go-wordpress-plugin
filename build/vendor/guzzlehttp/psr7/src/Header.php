@@ -3,7 +3,6 @@
 declare (strict_types=1);
 namespace SMTP2GOWPPlugin\GuzzleHttp\Psr7;
 
-/** @internal */
 final class Header
 {
     /**

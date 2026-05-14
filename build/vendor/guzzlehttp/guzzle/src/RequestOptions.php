@@ -6,7 +6,6 @@ namespace SMTP2GOWPPlugin\GuzzleHttp;
  * This class contains a list of built-in Guzzle request options.
  *
  * @see https://docs.guzzlephp.org/en/latest/request-options.html
- * @internal
  */
 final class RequestOptions
 {

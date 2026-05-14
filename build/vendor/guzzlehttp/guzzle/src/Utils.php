@@ -8,7 +8,6 @@ use SMTP2GOWPPlugin\GuzzleHttp\Handler\CurlMultiHandler;
 use SMTP2GOWPPlugin\GuzzleHttp\Handler\Proxy;
 use SMTP2GOWPPlugin\GuzzleHttp\Handler\StreamHandler;
 use SMTP2GOWPPlugin\Psr\Http\Message\UriInterface;
-/** @internal */
 final class Utils
 {
     /**

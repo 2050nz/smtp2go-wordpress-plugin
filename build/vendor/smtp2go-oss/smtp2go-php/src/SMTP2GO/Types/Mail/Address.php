@@ -2,10 +2,9 @@
 
 namespace SMTP2GOWPPlugin\SMTP2GO\Types\Mail;
 
-/** @internal */
 class Address
 {
-    protected $email;
+    protected $email = '';
     protected $name = '';
     public function __construct(string $email, string $name = '')
     {
@@ -24,7 +23,7 @@ class Address
      *
      * @return  self
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
         return $this;
@@ -41,7 +40,7 @@ class Address
      *
      * @return  self
      */
-    public function setEmail($email)
+    public function setEmail(string $email)
     {
         $this->email = $email;
         return $this;

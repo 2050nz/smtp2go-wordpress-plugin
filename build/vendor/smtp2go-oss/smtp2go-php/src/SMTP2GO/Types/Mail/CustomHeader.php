@@ -2,10 +2,9 @@
 
 namespace SMTP2GOWPPlugin\SMTP2GO\Types\Mail;
 
-/** @internal */
 class CustomHeader
 {
-    protected $header;
+    protected $header = '';
     protected $value = '';
     /**
      * 
@@ -30,7 +29,7 @@ class CustomHeader
      *
      * @return  self
      */
-    public function setValue($value)
+    public function setValue(string $value)
     {
         $this->value = $value;
         return $this;
@@ -47,7 +46,7 @@ class CustomHeader
      *
      * @return  self
      */
-    public function setHeader($header)
+    public function setHeader(string $header)
     {
         $this->header = $header;
         return $this;

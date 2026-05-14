@@ -2,7 +2,6 @@
 
 namespace SMTP2GOWPPlugin\SMTP2GO\Collections;
 
-/** @internal */
 class Collection implements \ArrayAccess, \Iterator, \Countable
 {
     protected $items;

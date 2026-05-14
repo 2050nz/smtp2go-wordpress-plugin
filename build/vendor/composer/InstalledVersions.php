@@ -21,7 +21,6 @@ use SMTP2GOWPPlugin\Composer\Semver\VersionParser;
  * To require its presence, you can require `composer-runtime-api ^2.0`
  *
  * @final
- * @internal
  */
 class InstalledVersions
 {
@@ -63,7 +62,7 @@ class InstalledVersions
         if (1 === \count($packages)) {
             return $packages[0];
         }
-        return \array_keys(\array_flip(\call_user_func_array('SMTP2GOWPPlugin\\array_merge', $packages)));
+        return \array_keys(\array_flip(\call_user_func_array('array_merge', $packages)));
     }
     /**
      * Returns a list of all package names with a specific type e.g. 'library'

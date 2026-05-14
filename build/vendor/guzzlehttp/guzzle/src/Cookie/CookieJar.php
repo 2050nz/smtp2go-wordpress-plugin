@@ -6,7 +6,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
 /**
  * Cookie jar that stores cookies as an array
- * @internal
  */
 class CookieJar implements CookieJarInterface
 {

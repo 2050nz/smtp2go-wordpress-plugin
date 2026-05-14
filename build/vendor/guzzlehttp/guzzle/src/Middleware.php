@@ -11,7 +11,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
 use SMTP2GOWPPlugin\Psr\Log\LoggerInterface;
 /**
  * Functions used to create and wrap handlers with handler middleware.
- * @internal
  */
 final class Middleware
 {
@@ -30,7 +29,7 @@ final class Middleware
                 if (empty($options['cookies'])) {
                     return $handler($request, $options);
                 } elseif (!$options['cookies'] instanceof CookieJarInterface) {
-                    throw new \InvalidArgumentException('cookies must be an instance of GuzzleHttp\\Cookie\\CookieJarInterface');
+                    throw new \InvalidArgumentException('SMTP2GOWPPlugin\\cookies must be an instance of GuzzleHttp\\Cookie\\CookieJarInterface');
                 }
                 $cookieJar = $options['cookies'];
                 $request = $cookieJar->withCookieHeader($request);

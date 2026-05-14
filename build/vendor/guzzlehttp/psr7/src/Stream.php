@@ -6,7 +6,6 @@ namespace SMTP2GOWPPlugin\GuzzleHttp\Psr7;
 use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
 /**
  * PHP stream implementation.
- * @internal
  */
 class Stream implements StreamInterface
 {

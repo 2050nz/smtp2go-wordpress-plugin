@@ -14,7 +14,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
  * @see https://datatracker.ietf.org/doc/html/rfc1950
  * @see https://datatracker.ietf.org/doc/html/rfc1952
  * @see https://www.php.net/manual/en/filters.compression.php
- * @internal
  */
 final class InflateStream implements StreamInterface
 {

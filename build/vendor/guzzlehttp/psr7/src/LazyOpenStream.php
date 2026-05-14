@@ -7,7 +7,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
 /**
  * Lazily reads or writes to a file that is opened only after an IO operation
  * take place on the stream.
- * @internal
  */
 final class LazyOpenStream implements StreamInterface
 {

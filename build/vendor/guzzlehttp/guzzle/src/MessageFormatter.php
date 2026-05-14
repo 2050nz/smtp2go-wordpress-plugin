@@ -33,7 +33,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
  * - {res_body}:       Response body
  *
  * @final
- * @internal
  */
 class MessageFormatter implements MessageFormatterInterface
 {

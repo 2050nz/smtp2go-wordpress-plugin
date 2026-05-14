@@ -8,7 +8,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\UriInterface;
  * Provides methods to determine if a modified URL should be considered cross-origin.
  *
  * @author Graham Campbell
- * @internal
  */
 final class UriComparator
 {

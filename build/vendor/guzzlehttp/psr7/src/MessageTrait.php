@@ -7,7 +7,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\MessageInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
 /**
  * Trait implementing functionality common to requests and responses.
- * @internal
  */
 trait MessageTrait
 {

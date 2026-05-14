@@ -7,7 +7,6 @@ use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\ServerRequestInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\UriInterface;
-/** @internal */
 final class Utils
 {
     /**
