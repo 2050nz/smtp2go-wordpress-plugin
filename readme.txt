@@ -138,6 +138,11 @@ Our data centers are located around the world, meaning lightning-fast connection
 
 == Changelog ==
 
+= v1.17.0 =
+* test against version 7.0
+* add region selector
+* fix sender name field pattern attribute regex compatibility with Chromium
+* add extra current_user_can checks on admin actions
 = v1.16.0 =
 * add "API Region" setting to pin requests to a specific regional endpoint (US, EU, AU)
 * add `smtp2go_api_region` filter for programmatic per-environment overrides
