@@ -823,10 +823,13 @@ class WordpressPluginAdmin
         }
         $apiKey = $this->keyHelper->decryptKey($apiKey);
 
-        $client = ApiClientFactory::create();
-        // what is this for?
-        if (empty($apiKey) || !$client) {
+        if (empty($apiKey)) {
             return [];
+        }
+
+        $client = new ApiClient($apiKey);
+        if ($region = SettingsHelper::getApiRegion()) {
+            $client->setApiRegion($region);
         }
         if (!empty($this->keyPermissions)) {
             return $this->keyPermissions;
