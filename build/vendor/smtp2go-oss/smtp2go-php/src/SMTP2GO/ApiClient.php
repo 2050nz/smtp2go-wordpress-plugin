@@ -343,7 +343,7 @@ class ApiClient
     /**
      * Get the valid regions with their corresponding api urls
      */
-    public function getRegionsWithUrls() : array
+    public static function getRegionsWithUrls() : array
     {
         $regionsWithUrls = [];
         foreach (static::VALID_REGIONS as $region) {
