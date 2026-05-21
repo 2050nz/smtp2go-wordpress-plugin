@@ -595,7 +595,7 @@ class WordpressPluginAdmin
      */
     public function outputRegionDropdownHtml()
     {
-        $regionsWithUrls = (ApiClientFactory::create() ?? new ApiClient(''))->getRegionsWithUrls();
+        $regionsWithUrls = ApiClient::getRegionsWithUrls();
         $regionsCountries = ['au' => 'Australia', 'eu' => 'Europe', 'us' => 'United States'];
         $field_name = 'smtp2go_api_region';
         $current    = (string) SettingsHelper::getOption($field_name);
