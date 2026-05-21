@@ -928,7 +928,7 @@ class WordpressPluginAdmin
      */
     public function validateApiRegion($input)
     {
-        if (in_array($input, ApiClient::VALID_REGIONS, true)) {
+        if ($input === '' || in_array($input, ApiClient::VALID_REGIONS, true)) {
             return $input;
         }
         add_settings_error(
