@@ -2,7 +2,7 @@
 Contributors: 2050nz, greatsaltlake
 Tags: email, smtp, inbox, delivery, wp_mail
 Requires at least: 6.2
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.16.0
 License: GPLv2 or later
