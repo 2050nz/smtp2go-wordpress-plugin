@@ -541,7 +541,7 @@ class WordpressPluginAdmin
 
         $pattern = '';
         if (!empty($args['pattern'])) {
-            $pattern = ' pattern="' . $args['pattern'] . '"';
+            $pattern = ' pattern="' . esc_attr($args['pattern']) . '"';
         }
 
         echo '<input type="' . $type . '"' . $required . ' class="smtp2go_text_input" name="' . $field_name . '"';
@@ -621,7 +621,7 @@ class WordpressPluginAdmin
         }
         echo '</select>';
         echo '<br /><label for="' . esc_attr($field_name) . '"><span style="cursor: default; font-weight: normal;">'
-            . esc_html__('Pin API requests to a specific regional endpoint. Leave on Default unless you have a data residency requirement.', $this->plugin_name)
+            . '<br/>Pin API requests to a specific regional endpoint. <a href="https://developers.smtp2go.com/docs/endpoints" target="_blank">See docs here.</a>'
             . '</span></label>';
     }
 
