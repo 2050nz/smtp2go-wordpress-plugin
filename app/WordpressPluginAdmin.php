@@ -139,7 +139,7 @@ class WordpressPluginAdmin
         if (!$success) {
             $res['reason'] = 'Unable to delete the API key from the database.';
         }
-        header("Constants-Type: application/json");
+        
         wp_send_json($res);
         exit;
     }
