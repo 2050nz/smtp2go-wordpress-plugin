@@ -150,13 +150,13 @@ class ApiClient
             try {
                 $serverIpForRequest = $this->getServerIpForRequest();
                 if (!empty($serverIpForRequest)) {
-                    $curlOpts = ['curl' => [\CURLOPT_RESOLVE => [static::HOST . ':443:' . $serverIpForRequest]]];
+                    $curlOpts = ['curl' => [\CURLOPT_RESOLVE => [$this->getHost() . ':443:' . $serverIpForRequest]]];
                 }
                 $this->lastResponse = $this->httpClient->request(
                     $service->getMethod(),
                     $this->getApiUrl() . $service->getEndpoint(),
                     //ensures user options can overwrite these defaults
-                    $this->requestOptions + ['json' => $body, 'verify' => $caPathOrFile, 'headers' => ['host' => static::HOST], 'timeout' => $this->getTimeout(), $curlOpts, 'on_stats' => function (\SMTP2GOWPPlugin\GuzzleHttp\TransferStats $stats) {
+                    $this->requestOptions + ['json' => $body, 'verify' => $caPathOrFile, 'headers' => ['host' => $this->getHost()], 'timeout' => $this->getTimeout(), $curlOpts, 'on_stats' => function (\SMTP2GOWPPlugin\GuzzleHttp\TransferStats $stats) {
                         $handlerStats = $stats->getHandlerStats();
                         $this->ipToIgnore = $handlerStats['primary_ip'] ?? null;
                     }]
@@ -198,6 +198,18 @@ class ApiClient
         }
         return \sprintf('https://%s-api.smtp2go.com/v3/', $this->getApiRegion());
     }
+    /**
+     * Get the host to use for the api request, based on the region set by the user
+     *
+     * @return string
+     */
+    public function getHost() : string
+    {
+        if ($this->getApiRegion() === '') {
+            return static::HOST;
+        }
+        return \sprintf('%s-api.smtp2go.com', $this->getApiRegion());
+    }
     protected function getServerIpForRequest()
     {
         if (empty($this->apiServerIps)) {
@@ -209,7 +221,7 @@ class ApiClient
     private function loadApiServerIps()
     {
         if (empty($this->getApiServerIps())) {
-            $ips = \gethostbynamel(static::HOST);
+            $ips = \gethostbynamel($this->getHost());
             if (!empty($ips)) {
                 $this->setApiServerIps(\array_filter($ips, function ($ip) {
                     return $ip !== $this->ipToIgnore;

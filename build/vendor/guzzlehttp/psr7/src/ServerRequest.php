@@ -129,8 +129,8 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public static function fromGlobals() : ServerRequestInterface
     {
-        $method = self::getServerParam('REQUEST_METHOD') ?? 'GET';
-        $headers = \getallheaders();
+        $method = \strtoupper(self::getServerParam('REQUEST_METHOD') ?? 'GET');
+        $headers = self::removeInvalidHostHeader(self::getAllHeaders());
         $uri = self::getUriFromGlobals();
         $body = new CachingStream(new LazyOpenStream('php://input', 'r+'));
         $serverProtocol = self::getServerParam('SERVER_PROTOCOL');
@@ -138,23 +138,55 @@ class ServerRequest extends Request implements ServerRequestInterface
         $serverRequest = new ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER);
         return $serverRequest->withCookieParams($_COOKIE)->withQueryParams($_GET)->withParsedBody($_POST)->withUploadedFiles(self::normalizeFiles($_FILES));
     }
+    /**
+     * @return array<array-key, string>
+     */
+    private static function getAllHeaders() : array
+    {
+        return self::normalizeHeaderValues(\getallheaders());
+    }
+    /**
+     * @param array<array-key, mixed> $headers
+     *
+     * @return array<array-key, string>
+     */
+    private static function normalizeHeaderValues(array $headers) : array
+    {
+        $normalized = [];
+        foreach ($headers as $name => $value) {
+            if (\is_scalar($value) || \is_object($value) && \method_exists($value, '__toString')) {
+                $normalized[$name] = (string) $value;
+            }
+        }
+        return $normalized;
+    }
     private static function getServerParam(string $key) : ?string
     {
         return isset($_SERVER[$key]) && \is_string($_SERVER[$key]) ? $_SERVER[$key] : null;
+    }
+    /**
+     * @param array<array-key, string> $headers
+     *
+     * @return array<array-key, string>
+     */
+    private static function removeInvalidHostHeader(array $headers) : array
+    {
+        foreach ($headers as $name => $value) {
+            if (\strtolower((string) $name) !== 'host') {
+                continue;
+            }
+            if (Rfc7230::parseHostHeader($value) === null) {
+                unset($headers[$name]);
+            }
+        }
+        return $headers;
     }
     /**
      * @return array{0: string|null, 1: int|null}
      */
     private static function extractHostAndPortFromAuthority(string $authority) : array
     {
-        $uri = 'http://' . $authority;
-        $parts = \parse_url($uri);
-        if (!\is_array($parts)) {
-            return [null, null];
-        }
-        $host = $parts['host'] ?? null;
-        $port = $parts['port'] ?? null;
-        return [$host, $port];
+        return Rfc7230::parseHostHeader($authority) ?? [null, null];
     }
     /**
      * Get a Uri populated with values from $_SERVER.
@@ -210,6 +242,26 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
     public function withUploadedFiles(array $uploadedFiles) : ServerRequestInterface
     {
+        $invalidUploadedFileFound = \false;
+        $invalidUploadedFile = null;
+        $stack = [$uploadedFiles];
+        while ($stack !== []) {
+            foreach (\array_pop($stack) as $uploadedFile) {
+                if ($uploadedFile instanceof UploadedFileInterface) {
+                    continue;
+                }
+                if (\is_array($uploadedFile)) {
+                    $stack[] = $uploadedFile;
+                    continue;
+                }
+                $invalidUploadedFileFound = \true;
+                $invalidUploadedFile = $uploadedFile;
+                break 2;
+            }
+        }
+        if ($invalidUploadedFileFound) {
+            \SMTP2GOWPPlugin\trigger_deprecation('guzzlehttp/psr7', '2.11', 'Passing %s inside ServerRequestInterface::withUploadedFiles() is deprecated; guzzlehttp/psr7 3.0 requires an UploadedFileInterface[] tree.', \get_debug_type($invalidUploadedFile));
+        }
         $new = clone $this;
         $new->uploadedFiles = $uploadedFiles;
         return $new;
@@ -243,6 +295,9 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
     public function withParsedBody($data) : ServerRequestInterface
     {
+        if ($data !== null && !\is_array($data) && !\is_object($data)) {
+            \SMTP2GOWPPlugin\trigger_deprecation('guzzlehttp/psr7', '2.11', 'Passing %s to ServerRequestInterface::withParsedBody() is deprecated; guzzlehttp/psr7 3.0 requires array|object|null.', \get_debug_type($data));
+        }
         $new = clone $this;
         $new->parsedBody = $data;
         return $new;
@@ -256,6 +311,9 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public function getAttribute($attribute, $default = null)
     {
+        if (!\is_string($attribute)) {
+            \SMTP2GOWPPlugin\trigger_deprecation('guzzlehttp/psr7', '2.11', 'Passing %s to ServerRequestInterface::getAttribute() is deprecated; guzzlehttp/psr7 3.0 requires string for $attribute.', \get_debug_type($attribute));
+        }
         if (\false === \array_key_exists($attribute, $this->attributes)) {
             return $default;
         }
@@ -263,12 +321,18 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
     public function withAttribute($attribute, $value) : ServerRequestInterface
     {
+        if (!\is_string($attribute)) {
+            \SMTP2GOWPPlugin\trigger_deprecation('guzzlehttp/psr7', '2.11', 'Passing %s to ServerRequestInterface::withAttribute() is deprecated; guzzlehttp/psr7 3.0 requires string for $attribute.', \get_debug_type($attribute));
+        }
         $new = clone $this;
         $new->attributes[$attribute] = $value;
         return $new;
     }
     public function withoutAttribute($attribute) : ServerRequestInterface
     {
+        if (!\is_string($attribute)) {
+            \SMTP2GOWPPlugin\trigger_deprecation('guzzlehttp/psr7', '2.11', 'Passing %s to ServerRequestInterface::withoutAttribute() is deprecated; guzzlehttp/psr7 3.0 requires string for $attribute.', \get_debug_type($attribute));
+        }
         if (\false === \array_key_exists($attribute, $this->attributes)) {
             return $this;
         }

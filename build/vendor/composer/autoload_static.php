@@ -7,14 +7,16 @@ namespace Composer\Autoload;
 class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
 {
     public static $files = array (
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'S' =>
         array (
+            'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Php80\\' => 39,
             'SMTP2GOWPPlugin\\SMTP2GO\\' => 24,
             'SMTP2GOWPPlugin\\Psr\\Http\\Message\\' => 33,
             'SMTP2GOWPPlugin\\Psr\\Http\\Client\\' => 32,
@@ -26,6 +28,10 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
     );
 
     public static $prefixDirsPsr4 = array (
+        'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Php80\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
+        ),
         'SMTP2GOWPPlugin\\SMTP2GO\\' =>
         array (
             0 => __DIR__ . '/..' . '/smtp2go-oss/smtp2go-php/src/SMTP2GO',
@@ -59,6 +65,7 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'SMTP2GOWPPlugin\\Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'SMTP2GOWPPlugin\\Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\BodySummarizer' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/BodySummarizer.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\BodySummarizerInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/BodySummarizerInterface.php',
@@ -84,10 +91,13 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
         'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\CurlFactoryInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/CurlFactoryInterface.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\CurlHandler' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/CurlHandler.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\CurlMultiHandler' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/CurlMultiHandler.php',
+        'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\CurlShareHandleState' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/CurlShareHandleState.php',
+        'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\CurlVersion' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/CurlVersion.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\EasyHandle' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/EasyHandle.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\HeaderProcessor' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/HeaderProcessor.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\MockHandler' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/MockHandler.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\Proxy' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/Proxy.php',
+        'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\ProxyEnvironment' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/ProxyEnvironment.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Handler\\StreamHandler' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Handler/StreamHandler.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\MessageFormatter' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/MessageFormatter.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\MessageFormatterInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/MessageFormatterInterface.php',
@@ -130,6 +140,7 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
         'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\Query' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Query.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\Request' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Request.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\Response' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Response.php',
+        'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\Rfc3986' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Rfc3986.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\Rfc7230' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Rfc7230.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\ServerRequest' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/ServerRequest.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Psr7\\Stream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Stream.php',
@@ -145,7 +156,9 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
         'SMTP2GOWPPlugin\\GuzzleHttp\\RequestOptions' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/RequestOptions.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\RetryMiddleware' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/RetryMiddleware.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\TransferStats' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/TransferStats.php',
+        'SMTP2GOWPPlugin\\GuzzleHttp\\TransportSharing' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/TransportSharing.php',
         'SMTP2GOWPPlugin\\GuzzleHttp\\Utils' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Utils.php',
+        'SMTP2GOWPPlugin\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'SMTP2GOWPPlugin\\Psr\\Http\\Client\\ClientExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientExceptionInterface.php',
         'SMTP2GOWPPlugin\\Psr\\Http\\Client\\ClientInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientInterface.php',
         'SMTP2GOWPPlugin\\Psr\\Http\\Client\\NetworkExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/NetworkExceptionInterface.php',
@@ -177,6 +190,11 @@ class ComposerStaticInit3389f6bd0498f09b057338e2c1e45e24
         'SMTP2GOWPPlugin\\SMTP2GO\\Types\\Mail\\CustomHeader' => __DIR__ . '/..' . '/smtp2go-oss/smtp2go-php/src/SMTP2GO/Types/Mail/CustomHeader.php',
         'SMTP2GOWPPlugin\\SMTP2GO\\Types\\Mail\\FileAttachment' => __DIR__ . '/..' . '/smtp2go-oss/smtp2go-php/src/SMTP2GO/Types/Mail/FileAttachment.php',
         'SMTP2GOWPPlugin\\SMTP2GO\\Types\\Mail\\InlineAttachment' => __DIR__ . '/..' . '/smtp2go-oss/smtp2go-php/src/SMTP2GO/Types/Mail/InlineAttachment.php',
+        'SMTP2GOWPPlugin\\Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
+        'SMTP2GOWPPlugin\\Symfony\\Polyfill\\Php80\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/PhpToken.php',
+        'SMTP2GOWPPlugin\\UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+        'SMTP2GOWPPlugin\\ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
