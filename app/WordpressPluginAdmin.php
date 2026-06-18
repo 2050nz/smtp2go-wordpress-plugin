@@ -106,17 +106,28 @@ class WordpressPluginAdmin
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Pragma: no-cache');
         header('Expires: 0');
+        // Prevent CSV formula injection: a leading =, +, -, @ (or tab/CR)
+        // can be interpreted as a formula by spreadsheet apps. These fields
+        // derive from email content, which can be attacker-influenced.
+        $sanitize = static function ($value) {
+            $value = (string) $value;
+            if ($value !== '' && preg_match('/^[=+\-@\t\r]/', $value)) {
+                $value = "'" . $value;
+            }
+            return $value;
+        };
+
         $h = fopen('php://output', 'w');
         fputcsv($h, ['Site ID', 'To', 'From', 'Subject', 'Response', 'Created At']);
         foreach ($logs as $logItem) {
-            fputcsv($h, [
+            fputcsv($h, array_map($sanitize, [
                 $logItem->site_id,
                 $logItem->to,
                 $logItem->from,
                 $logItem->subject,
                 $logItem->response,
                 $logItem->created_at,
-            ]);
+            ]));
         }
         fclose($h);
 
