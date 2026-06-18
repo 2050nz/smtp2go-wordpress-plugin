@@ -67,8 +67,9 @@ class WordpressPluginAdmin
         $this->plugin_name = $plugin_name;
         $this->version     = $version;
         $this->keyHelper = new SecureApiKeyHelper();
-        //wrap in check is_admin() ?
-        $this->checkForConflictingPlugins();
+        if (is_admin()) {
+            $this->checkForConflictingPlugins();
+        }
     }
 
     public function truncateLogs()
@@ -139,7 +140,7 @@ class WordpressPluginAdmin
         if (!$success) {
             $res['reason'] = 'Unable to delete the API key from the database.';
         }
-        
+
         wp_send_json($res);
         exit;
     }
@@ -432,15 +433,7 @@ class WordpressPluginAdmin
         return $final;
     }
 
-    public function outputRadioOptionsHtml($args)
-    {
-        $currentValue = \SMTP2GO\App\SettingsHelper::getOption($args['name'], 1);
-        foreach ($args['options'] as $value => $label) {
-            $selected = $value == $currentValue ? 'checked="checked"' : '';
-            echo '<input ' . $selected . ' type="radio" name="' . $args['name'] . '" value="' . $value . '">' . $label . PHP_EOL;
-        }
-        echo '<br/>', $args['label'];
-    }
+
 
     /**
      * Output the html for managing custom headers
