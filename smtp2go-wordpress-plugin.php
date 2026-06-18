@@ -84,6 +84,9 @@ function run_SMTP2GO_wordpress_plugin()
 if (!function_exists('SMTP2GO_dd')) {
     function SMTP2GO_dd()
     {
+        if (wp_get_environment_type() !== 'development') {
+            return;
+        }
         foreach (func_get_args() as $arg) {
             echo '<pre>', print_r($arg, 1), '</pre>';
         }
