@@ -109,7 +109,7 @@ class SMTP2GOMailer extends PHPMailer
             $reason = $response->data->field_validation_errors->message;
         } elseif (!empty($response->data->error) && !empty($response->data->error_code)) {
             $reason = $response->data->error . '<br />' . $response->data->error_code;
-        } elseif ($response->data->failed == true && !empty($response->data->failures)) {
+        } elseif (!empty($response->data->failed) && $response->data->failed == true && !empty($response->data->failures)) {
             $reason = $response->data->failures[0];
         }
 
