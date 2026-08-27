@@ -2,9 +2,9 @@
 Contributors: 2050nz, greatsaltlake
 Tags: email, smtp, inbox, delivery, wp_mail
 Requires at least: 6.2
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.17.0
+Stable tag: 1.17.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,8 @@ Our data centers are located around the world, meaning lightning-fast connection
 
 == Changelog ==
 
+= v1.17.1 =
+* test against version 7.1
 = v1.17.0 =
 * test against version 7.0
 * add region selector
