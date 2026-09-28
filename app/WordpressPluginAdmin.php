@@ -273,6 +273,11 @@ class WordpressPluginAdmin
             'smtp2go_enable_api_logs'
         );
 
+        register_setting(
+            'api_settings',
+            'smtp2go_use_fast_accept'
+        );
+
         add_settings_field(
             'smtp2go_enable_api_logs',
             __('Enable logging', $this->plugin_name),
@@ -282,6 +287,19 @@ class WordpressPluginAdmin
             array(
                 'name' => 'smtp2go_enable_api_logs',
                 'label' => __(''),
+            )
+        );
+
+         add_settings_field(
+            'smtp2go_use_fast_accept',
+            __('Use Fast Accept', $this->plugin_name),
+            array($this, 'outputCheckboxHtml'),
+            $this->plugin_name,
+            'smtp2go_settings_section',
+            array(
+                'name' => 'smtp2go_use_fast_accept',
+                'label' => __('If enabled, the email will be accepted immediately and sent in a background process. Use webhooks if you need information about final delivery to the recipient.'),
+
             )
         );
 
@@ -768,9 +786,10 @@ class WordpressPluginAdmin
         if (!empty($_POST['to_email']) && is_email($_POST['to_email'])) {
             $to_email = sanitize_email($_POST['to_email']);
         }
-        if (!empty($_POST['to_name'])) {
+        if ($to_email && !empty($_POST['to_name'])) {
             $to_name  = sanitize_text_field($_POST['to_name']);
-            $to_email = '"' . $to_name . '" <' . $to_email . '>';
+            // No quotes: wp_mail passes the name through to PHPMailer, which quotes it itself
+            $to_email = $to_name . ' <' . $to_email . '>';
         }
         if (empty($to_email)) {
             wp_send_json(array('success' => 0, 'reason' => 'Invalid recipient specified'));
@@ -778,7 +797,8 @@ class WordpressPluginAdmin
         $body = __('Success!', $this->plugin_name) . "\n";
         $body .= __('You have successfully set up your SMTP2GO Wordpress Plugin', $this->plugin_name);
 
-        $success = wp_mail($to_email, __('Test Email Via SMTP2GO Wordpress Plugin', $this->plugin_name), $body);
+        // Pass as an array so wp_mail doesn't explode() a name containing a comma into two recipients
+        $success = wp_mail([$to_email], __('Test Email Via SMTP2GO Wordpress Plugin', $this->plugin_name), $body);
 
         Logger::errorLog('PHPMAILER Instance: ' . print_r($phpmailer, 1));
 
