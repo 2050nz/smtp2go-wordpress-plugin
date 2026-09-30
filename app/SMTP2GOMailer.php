@@ -90,7 +90,22 @@ class SMTP2GOMailer extends PHPMailer
             ));
         }
 
+        if (SettingsHelper::getOption('smtp2go_enable_queued_sending') && function_exists('as_enqueue_async_action')) {
+            $queuedMailId = QueuedMailManager::store($mailSendService);
+            $queueId = as_enqueue_async_action('smtp2go_send_queued_email', [$queuedMailId], 'smtp2go');
 
+            if ($queueId) {
+                return true;
+            }
+            // enqueueing failed, fall back to sending immediately so the email isn't lost
+            Logger::errorLog("Failed to enqueue email $queuedMailId, sending synchronously");
+        }
+
+        return $this->apiSend($mailSendService);
+    }
+
+    public function apiSend(Send $mailSendService)
+    {
         // makeApiClient() applies the configured API region (and the
         // `smtp2go_api_region` filter) to the new client. If a client has
         // already been injected via setApiClient() we leave it alone.
