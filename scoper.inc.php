@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 use Isolated\Symfony\Component\Finder\Finder;
 
+// Action Scheduler is shared with WooCommerce and other plugins via global class/function names,
+// so it must be copied into build/ untouched rather than prefixed.
+$actionSchedulerFiles = array_map(
+    static fn (SplFileInfo $file) => $file->getPathname(),
+    iterator_to_array(Finder::create()->files()->in('vendor/woocommerce/action-scheduler'), false)
+);
+
 return [
     // The prefix configuration. If a non null value will be used, a random prefix will be generated.
     'prefix' => 'SMTP2GOWPPlugin',
@@ -14,7 +21,6 @@ return [
     //
     // For more see: https://github.com/humbug/php-scoper#finders-and-paths
     'finders' => [
-        Finder::create()->files()->in('vendor'),
         Finder::create()
             ->files()
             ->ignoreVCS(true)
@@ -32,6 +38,8 @@ return [
             'composer.json',
         ]),
     ],
+
+    'exclude-files' => $actionSchedulerFiles,
 
     // Whitelists a list of files. Unlike the other whitelist related features, this one is about completely leaving
     // a file untouched.
