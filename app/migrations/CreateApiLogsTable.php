@@ -31,4 +31,17 @@ final class CreateApiLogsTable
 
         \dbDelta($sql);
     }
+
+    public static function drop()
+    {
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'smtp2go_api_logs';
+
+        if (empty($wpdb->get_results($wpdb->prepare("SHOW TABLES LIKE %s", $table)))) {
+            return;
+        }
+
+        $wpdb->query("DROP TABLE IF EXISTS $table");
+    }
 }
