@@ -33,6 +33,10 @@ class WordpressPluginActivator
     {
         // Create the API logs table
         require_once plugin_dir_path(__FILE__) . 'migrations/CreateApiLogsTable.php';
+        require_once plugin_dir_path(__FILE__) . 'migrations/CreateQueuedMailTable.php';
+
         \SMTP2GO\App\Migrations\CreateApiLogsTable::run();
+        \SMTP2GO\App\Migrations\CreateQueuedMailTable::run();
+
     }
 }
