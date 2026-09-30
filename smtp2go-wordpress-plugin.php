@@ -27,6 +27,8 @@
 use SMTP2GO\App\WordpressPluginActivator;
 use SMTP2GO\App\WordpressPluginDeactivator;
 
+require_once( plugin_dir_path( __FILE__ ) . '/build/vendor/woocommerce/action-scheduler/action-scheduler.php' );
+
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
     die;
@@ -77,6 +79,7 @@ register_deactivation_hook(__FILE__, 'deactivate_SMTP2GO_wordpress_plugin');
  */
 function run_SMTP2GO_wordpress_plugin()
 {
+    
     $plugin = new SMTP2GO\App\WordpressPlugin();
     $plugin->run();
 }
