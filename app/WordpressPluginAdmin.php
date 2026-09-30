@@ -285,6 +285,23 @@ class WordpressPluginAdmin
             )
         );
 
+        register_setting(
+            'api_settings',
+            'smtp2go_enable_queued_sending'
+        );
+
+        add_settings_field(
+            'smtp2go_enable_queued_sending',
+            __('Send emails in the background', $this->plugin_name),
+            array($this, 'outputCheckboxHtml'),
+            $this->plugin_name,
+            'smtp2go_settings_section',
+            array(
+                'name' => 'smtp2go_enable_queued_sending',
+                'label' => __('Queue emails and send them in the background using Action Scheduler', $this->plugin_name),
+            )
+        );
+
 
 
         /** api key field */
