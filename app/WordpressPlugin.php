@@ -150,6 +150,45 @@ class WordpressPlugin
         $this->loader->addAction('wp_ajax_smtp2go_clear_saved_api_key', $plugin_admin, 'clearSavedApiKey');
 
         $this->loader->addAction('phpmailer_init', $this, 'configurePhpmailer');
+
+        $this->loader->addAction('smtp2go_send_queued_email', $this, 'sendQueuedEmail');
+
+        $this->loader->addAction('init', $this, 'scheduleQueuePurge');
+        $this->loader->addAction('smtp2go_purge_queued_emails', $this, 'purgeQueuedEmails');
+    }
+
+    public function sendQueuedEmail($queuedMailId)
+    {
+        if (!\SMTP2GO\App\SettingsHelper::getOption('smtp2go_enabled')) {
+            return;
+        }
+        $payload = QueuedMailManager::getPayload($queuedMailId);
+        if (is_array($payload)) {
+            $queuedSend = new QueuedSend($payload);
+            $mailer = new SMTP2GOMailer;
+            $mailer->apiSend($queuedSend);
+            QueuedMailManager::delete($queuedMailId);
+        }
+    }
+
+    public function scheduleQueuePurge()
+    {
+        if (!wp_next_scheduled('smtp2go_purge_queued_emails')) {
+            wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', 'smtp2go_purge_queued_emails');
+        }
+    }
+
+    /**
+     * Removes queued email payloads that were never cleaned up, e.g. because
+     * the send failed or the action was cancelled.
+     */
+    public function purgeQueuedEmails()
+    {
+        /**
+         * Number of days to keep queued email records before purging them.
+         */
+        $days = (int) apply_filters('smtp2go_queued_email_retention_days', 7);
+        QueuedMailManager::purgeOlderThan($days);
     }
 
     public function configurePhpmailer($phpmailer)
