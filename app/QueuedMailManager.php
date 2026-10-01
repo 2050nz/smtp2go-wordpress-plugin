@@ -10,8 +10,23 @@ class QueuedMailManager
     {
         /** @var \wpdb $wpdb */
         global $wpdb;
+        $payload = json_encode(
+                $buildsRequest->buildRequestBody(),
+                JSON_INVALID_UTF8_SUBSTITUTE
+            );
+        if ($payload === false) {
+            Logger::errorLog('SMTP2GO: Failed to encode payload for queued email.');
+            return false;
+        }
+
+        //if the payload is over 5MB, send immediately
+        $maxBytes = (int) apply_filters('smtp2go_queued_email_max_bytes', 5 * MB_IN_BYTES);
+        if (strlen($payload) > $maxBytes) {
+            Logger::errorLog('SMTP2GO: Email payload too large to queue (' . strlen($payload) . ' bytes), sending immediately.');
+            return false;
+        }
         $insert = [
-            'payload' => json_encode($buildsRequest->buildRequestBody()),
+            'payload'    => $payload,
             'created_at' => current_time('mysql', 1)
         ];
         $wpdb->insert(
@@ -31,7 +46,7 @@ class QueuedMailManager
             ARRAY_A
         );
 
-        return $result ? json_decode($result['payload'],true) : false;
+        return $result ? json_decode($result['payload'], true) : false;
     }
 
     public static function delete($id)
