@@ -79,7 +79,6 @@ class SMTP2GOMailer extends PHPMailer
         }
         /*we dont want the wp_mail default to override our configured options,
         only other plugins. There doesnt seem to be a nicer way to detect this.*/
-
         if ($this->FromName != 'WordPress' && !empty($this->From)) {
             //if the force from address is set, we need to use the configured 
             //from address but allow the name to be customised
@@ -90,12 +89,15 @@ class SMTP2GOMailer extends PHPMailer
             ));
         }
 
-        if (SettingsHelper::getOption('smtp2go_enable_queued_sending') && function_exists('as_enqueue_async_action')) {
+        if (SettingsHelper::getOption('smtp2go_enable_queued_sending') 
+            && function_exists('as_enqueue_async_action')) {
             $queuedMailId = QueuedMailManager::store($mailSendService);
-            $queueId = as_enqueue_async_action('smtp2go_send_queued_email', [$queuedMailId], 'smtp2go');
+            if ($queuedMailId) {
+                $queueId = as_enqueue_async_action('smtp2go_send_queued_email', [$queuedMailId], 'smtp2go');
 
-            if ($queueId) {
-                return true;
+                if ($queueId) {
+                    return true;
+                }
             }
             // enqueueing failed, fall back to sending immediately so the email isn't lost
             Logger::errorLog("Failed to enqueue email $queuedMailId, sending synchronously");
