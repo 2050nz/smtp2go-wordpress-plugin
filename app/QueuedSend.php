@@ -7,7 +7,7 @@ use SMTP2GOWPPlugin\SMTP2GO\Service\Mail\Send;
 class QueuedSend extends Send
 {
     private $serialisedBody;
-    
+
     public function __construct(array $serialisedBody)
     {
         $this->serialisedBody = $serialisedBody;
@@ -19,8 +19,7 @@ class QueuedSend extends Send
     }
 
     /*
-     * The parent's properties are never populated because we bypass its
-     * constructor, so the getters used by the Logger read from the payload.
+     These are used by the Logger
      */
     public function getSender(): string
     {
