@@ -57,7 +57,7 @@
           $(".js-send-test.spinner").removeClass("is-active");
           if (response.success) {
             $(".smtp2go-js-failure").hide();
-            $(".smtp2go-js-success").show();
+            $(".smtp2go-js-success").text(response.reason).show();
           } else {
             $(".smtp2go-js-failure").text(response.reason).show();
             $(".smtp2go-js-success").hide();
