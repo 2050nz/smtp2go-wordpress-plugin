@@ -41,6 +41,8 @@ class SMTP2GOMailer extends PHPMailer
 
     protected function mailSend($header, $body)
     {
+        //reset, as the instance gets reused across the same request
+        $this->queueId = null;
 
         $from = [SettingsHelper::getOption('smtp2go_from_address'), SettingsHelper::getOption('smtp2go_from_name')];
 
@@ -91,16 +93,22 @@ class SMTP2GOMailer extends PHPMailer
             ));
         }
 
-        if (SettingsHelper::getOption('smtp2go_enable_queued_sending') 
-            && function_exists('as_enqueue_async_action')) {
+        if (
+            SettingsHelper::getOption('smtp2go_enable_queued_sending')
+            && function_exists('as_enqueue_async_action')
+        ) {
             $queuedMailId = QueuedMailManager::store($mailSendService);
             if ($queuedMailId) {
-                $this->queueId = as_enqueue_async_action('smtp2go_send_queued_email', [$queuedMailId], 'smtp2go');
+                $this->queueId = as_enqueue_async_action(
+                    'smtp2go_send_queued_email',
+                    [$queuedMailId],
+                    'smtp2go'
+                );
 
-                if ($this->queueId) {                    
+                if ($this->queueId) {
                     return true;
                 }
-            }            
+            }
         }
 
         return $this->apiSend($mailSendService);
