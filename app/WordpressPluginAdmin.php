@@ -814,13 +814,14 @@ class WordpressPluginAdmin
             wp_send_json(array('success' => 1, 'reason' => __('Email was queued for sending in the background.', $this->plugin_name)));
         }
         $request = $phpmailer->getLastRequest();
-        $response = $request->getResponseBody();
+        
         $reason = __('Success! The test message was sent.', $this->plugin_name);
         if (empty($request)) {
             $reason = 'Unable to find the request made to the SMTP2GO API. The most likely cause is a conflict with another plugin.';
             wp_send_json(array('success' => 0, 'reason' => htmlentities($reason)));
             exit;
         }
+        $response = $request->getResponseBody();
 
         Logger::errorLog('last request!' . print_r($request, 1));
         Logger::errorLog('last response!' . print_r($response, 1));
