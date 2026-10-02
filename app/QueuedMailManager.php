@@ -2,7 +2,9 @@
 
 namespace SMTP2GO\App;
 
+use SMTP2GO\App\Migrations\CreateQueuedMailTable;
 use SMTP2GOWPPlugin\SMTP2GO\Contracts\BuildsRequest;
+require_once dirname(__FILE__) . '/migrations/CreateQueuedMailTable.php';
 
 class QueuedMailManager
 {
@@ -10,6 +12,9 @@ class QueuedMailManager
     {
         /** @var \wpdb $wpdb */
         global $wpdb;
+        
+        CreateQueuedMailTable::run();
+
         $payload = json_encode(
                 $buildsRequest->buildRequestBody(),
                 JSON_INVALID_UTF8_SUBSTITUTE
