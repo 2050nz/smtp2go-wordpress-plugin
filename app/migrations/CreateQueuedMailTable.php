@@ -6,11 +6,24 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 final class CreateQueuedMailTable
 {
+    /**
+     * Tables already checked this request, keyed by table name so each
+     * site on multisite (different $wpdb->prefix) is still checked.
+     *
+     * @var array<string, bool>
+     */
+    private static $checked = [];
+
     public static function run()
     {
-        global $wpdb;       
+        global $wpdb;
 
         $table = $wpdb->prefix . 'smtp2go_queued_emails';
+
+        if (isset(self::$checked[$table])) {
+            return;
+        }
+        self::$checked[$table] = true;
 
         if (!empty($wpdb->get_results($wpdb->prepare("SHOW TABLES LIKE %s", $table)))) {
             return;
@@ -18,7 +31,7 @@ final class CreateQueuedMailTable
 
         $charsetCollate = $wpdb->get_charset_collate();
         $sql = "CREATE TABLE $table (
-            `id` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,                       
+            `id` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
             `payload` LONGTEXT NULL,
             `created_at` TIMESTAMP NULL
         ) $charsetCollate;";
@@ -31,6 +44,7 @@ final class CreateQueuedMailTable
         global $wpdb;
 
         $table = $wpdb->prefix . 'smtp2go_queued_emails';
+        unset(self::$checked[$table]);
 
         if (empty($wpdb->get_results($wpdb->prepare("SHOW TABLES LIKE %s", $table)))) {
             return;

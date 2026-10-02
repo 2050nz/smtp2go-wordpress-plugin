@@ -7,11 +7,24 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 final class CreateApiLogsTable
 {
+    /**
+     * Tables already checked this request, keyed by table name so each
+     * site on multisite (different $wpdb->prefix) is still checked.
+     *
+     * @var array<string, bool>
+     */
+    private static $checked = [];
+
     public static function run()
     {
         global $wpdb;
 
         $table = $wpdb->prefix . 'smtp2go_api_logs';
+
+        if (isset(self::$checked[$table])) {
+            return;
+        }
+        self::$checked[$table] = true;
 
         if (!empty($wpdb->get_results($wpdb->prepare("SHOW TABLES LIKE %s", $table)))) {
             return;
@@ -36,6 +49,7 @@ final class CreateApiLogsTable
         global $wpdb;
 
         $table = $wpdb->prefix . 'smtp2go_api_logs';
+        unset(self::$checked[$table]);
 
         if (empty($wpdb->get_results($wpdb->prepare("SHOW TABLES LIKE %s", $table)))) {
             return;
