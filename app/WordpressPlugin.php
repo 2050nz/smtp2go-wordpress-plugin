@@ -153,20 +153,24 @@ class WordpressPlugin
 
         $this->loader->addAction('smtp2go_send_queued_email', $this, 'sendQueuedEmail');
 
-        $this->loader->addAction('init', $this, 'scheduleQueuePurge');
+        if (\SMTP2GO\App\SettingsHelper::getOption('smtp2go_enable_queued_sending')) {
+            $this->loader->addAction('init', $this, 'scheduleQueuePurge');
+        }
+
         $this->loader->addAction('smtp2go_purge_queued_emails', $this, 'purgeQueuedEmails');
     }
 
     public function sendQueuedEmail($queuedMailId)
     {
-        if (!\SMTP2GO\App\SettingsHelper::getOption('smtp2go_enabled')) {
-            return;
-        }
         $payload = QueuedMailManager::getPayload($queuedMailId);
         if (is_array($payload)) {
             $queuedSend = new QueuedSend($payload);
             $mailer = new SMTP2GOMailer;
-            $mailer->apiSend($queuedSend);
+            //in the case of network issues, apiSend will return false rather than throw
+            //so throw our own exception to Action Scheduler
+            if (!$mailer->apiSend($queuedSend)) {
+                throw new \Exception("SMTP2GO: Queued email $queuedMailId failed to send");
+            }
             QueuedMailManager::delete($queuedMailId);
         } else {
             throw new \Exception("SMTP2GO: Failed to retrieve payload for queued email with ID $queuedMailId");
