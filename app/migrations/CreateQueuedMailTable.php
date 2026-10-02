@@ -4,13 +4,11 @@ namespace SMTP2GO\App\Migrations;
 
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-
 final class CreateQueuedMailTable
 {
-
     public static function run()
     {
-        global $wpdb;
+        global $wpdb;       
 
         $table = $wpdb->prefix . 'smtp2go_queued_emails';
 

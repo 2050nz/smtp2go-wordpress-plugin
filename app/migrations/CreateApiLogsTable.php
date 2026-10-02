@@ -7,7 +7,6 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 final class CreateApiLogsTable
 {
-
     public static function run()
     {
         global $wpdb;
