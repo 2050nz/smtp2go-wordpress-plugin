@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The plugin bootstrap file - the filename MUST be all lowercase
  *
@@ -33,7 +34,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-require_once( plugin_dir_path( __FILE__ ) . '/build/vendor/woocommerce/action-scheduler/action-scheduler.php' );
+require_once(plugin_dir_path(__FILE__) . '/build/vendor/woocommerce/action-scheduler/action-scheduler.php');
 
 /**
  * Currently plugin version.
@@ -80,7 +81,6 @@ register_deactivation_hook(__FILE__, 'deactivate_SMTP2GO_wordpress_plugin');
  */
 function run_SMTP2GO_wordpress_plugin()
 {
-    
     $plugin = new SMTP2GO\App\WordpressPlugin();
     $plugin->run();
 }
