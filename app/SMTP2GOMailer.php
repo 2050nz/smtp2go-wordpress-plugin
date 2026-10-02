@@ -98,9 +98,7 @@ class SMTP2GOMailer extends PHPMailer
                 if ($queueId) {
                     return true;
                 }
-            }
-            // enqueueing failed, fall back to sending immediately so the email isn't lost
-            Logger::errorLog("Failed to enqueue email $queuedMailId, sending synchronously");
+            }            
         }
 
         return $this->apiSend($mailSendService);
