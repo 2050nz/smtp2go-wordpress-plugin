@@ -35,6 +35,4 @@ class QueuedSend extends Send
     {
         return (string) ($this->serialisedBody['subject'] ?? '');
     }
-
-
 }
