@@ -27,12 +27,13 @@
 use SMTP2GO\App\WordpressPluginActivator;
 use SMTP2GO\App\WordpressPluginDeactivator;
 
-require_once( plugin_dir_path( __FILE__ ) . '/build/vendor/woocommerce/action-scheduler/action-scheduler.php' );
 
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
     die;
 }
+
+require_once( plugin_dir_path( __FILE__ ) . '/build/vendor/woocommerce/action-scheduler/action-scheduler.php' );
 
 /**
  * Currently plugin version.
