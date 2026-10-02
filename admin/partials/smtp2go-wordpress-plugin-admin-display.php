@@ -129,8 +129,7 @@ function SMTP2GO_tab_active($tab)
                 </div>
             </div>
 
-            <div class="smtp2go-js-success smtp2go-success-message smtp2go_text_input" style="display:none">
-                <?php _e('Success! The test message was sent.', $this->plugin_name) ?>
+            <div class="smtp2go-js-success smtp2go-success-message smtp2go_text_input" style="display:none">                
             </div>
 
             <div class="smtp2go-js-failure smtp2go-error-message smtp2go_text_input" style="display:none"></div>
