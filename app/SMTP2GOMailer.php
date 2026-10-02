@@ -37,6 +37,8 @@ class SMTP2GOMailer extends PHPMailer
 
     private $apiClient = null;
 
+    private $queueId;
+
     protected function mailSend($header, $body)
     {
 
@@ -93,15 +95,20 @@ class SMTP2GOMailer extends PHPMailer
             && function_exists('as_enqueue_async_action')) {
             $queuedMailId = QueuedMailManager::store($mailSendService);
             if ($queuedMailId) {
-                $queueId = as_enqueue_async_action('smtp2go_send_queued_email', [$queuedMailId], 'smtp2go');
+                $this->queueId = as_enqueue_async_action('smtp2go_send_queued_email', [$queuedMailId], 'smtp2go');
 
-                if ($queueId) {
+                if ($this->queueId) {                    
                     return true;
                 }
             }            
         }
 
         return $this->apiSend($mailSendService);
+    }
+
+    public function wasQueued()
+    {
+        return !empty($this->queueId);
     }
 
     public function apiSend(Send $mailSendService)

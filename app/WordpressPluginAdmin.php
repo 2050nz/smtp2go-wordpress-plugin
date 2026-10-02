@@ -810,7 +810,9 @@ class WordpressPluginAdmin
             wp_send_json(array('success' => 0, 'reason' => htmlentities($reason)));
             exit;
         }
-
+        if ($phpmailer->wasQueued()) {
+            wp_send_json(array('success' => 1, 'reason' => 'Email was queued for sending in the background.'));
+        }
         $request = $phpmailer->getLastRequest();
         $response = $request->getResponseBody();
         $reason = null;
