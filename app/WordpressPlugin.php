@@ -168,6 +168,8 @@ class WordpressPlugin
             $mailer = new SMTP2GOMailer;
             $mailer->apiSend($queuedSend);
             QueuedMailManager::delete($queuedMailId);
+        } else {
+            throw new \Exception("SMTP2GO: Failed to retrieve payload for queued email with ID $queuedMailId");
         }
     }
 
@@ -184,9 +186,7 @@ class WordpressPlugin
      */
     public function purgeQueuedEmails()
     {
-        /**
-         * Number of days to keep queued email records before purging them.
-         */
+
         $days = (int) apply_filters('smtp2go_queued_email_retention_days', 7);
         QueuedMailManager::purgeOlderThan($days);
     }
