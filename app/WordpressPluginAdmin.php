@@ -154,12 +154,13 @@ class WordpressPluginAdmin
     {
         $apiKey = SettingsHelper::getOption('smtp2go_api_key');
         if (empty($apiKey)) {
-            return;
+            return false;
         }
         if (!$this->hasEndpointPermission('/stats/email_cycle')) {
-            return;
+            return false;
         }
         $apiKey    = $this->keyHelper->decryptKey($apiKey);
+        
         $client = ApiClientFactory::create();
         $stats   = null;
         if ($client && $client->consume(new Service('stats/email_cycle'))) {
@@ -637,9 +638,13 @@ class WordpressPluginAdmin
         }
 
         $setting = SettingsHelper::getOption('smtp2go_api_key');
-        $secureHelper = new SecureApiKeyHelper();
 
-        $setting = $secureHelper->decryptKey($setting);
+        $secureHelper = new SecureApiKeyHelper();
+        $decrypted = true;
+        if ($setting) {
+            $decrypted = $secureHelper->decryptKey($setting);
+        }
+
         $hint    = '<span style="cursor: default; font-weight: normal;">The API key will need permissions <i>/email/send</i> and optionally <i>/stats/email_summary</i>.</span>';
         if (empty($setting)) {
             $this->outputTextFieldHtml(array(
@@ -652,7 +657,11 @@ class WordpressPluginAdmin
         }
 
         echo '<div style="display:flex;align-items:center;margin-bottom:10px">';
-        echo '<span class="smtp2go_obscured_key">', substr($setting, 0, 9), str_repeat('x', 30), '</span>';
+        if ($setting !== false && $secureHelper->isDecrypted($decrypted)) {
+            echo '<span class="smtp2go_obscured_key">', substr($decrypted, 0, 9), str_repeat('x', 30), '</span>';
+        } else {
+            echo '<span class="smtp2go_obscured_key notice notice-error">We cant decrypt your API Key - please re-enter it here</span>';
+        }
         $this->outputTextFieldHtml(
             array(
                 'name'     => 'smtp2go_api_key_update',
@@ -853,6 +862,7 @@ class WordpressPluginAdmin
      */
     public function validateApiKey($input)
     {
+        
         if (SettingsHelper::settingHasDefinedConstant('smtp2go_api_key')) {
             return;
         }
@@ -868,6 +878,7 @@ class WordpressPluginAdmin
             $input = $this->keyHelper->decryptKey($input);
         }
 
+
         // switch encrypted vs not keys
         if (strpos($input, 'api-') === 0) {
             $key = $input;
@@ -876,6 +887,7 @@ class WordpressPluginAdmin
         } else {
             $key = false;
         }
+
 
         if (!$key) {
             add_settings_error(
@@ -908,7 +920,8 @@ class WordpressPluginAdmin
 
         $plain = sanitize_text_field($key);
 
-        return $this->keyHelper->encryptKey($plain);
+        $enc = $this->keyHelper->encryptKey($plain);
+        return $enc;
     }
 
     public function validateSenderName($input)
