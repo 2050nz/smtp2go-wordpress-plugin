@@ -30,6 +30,7 @@ trait MessageTrait
         if (!\is_string($version)) {
             \SMTP2GOWPPlugin\trigger_deprecation('guzzlehttp/psr7', '2.11', 'Passing %s to MessageInterface::withProtocolVersion() is deprecated; guzzlehttp/psr7 3.0 requires string.', \get_debug_type($version));
         }
+        $this->assertProtocolVersion($version);
         if ($this->protocol === $version) {
             return $this;
         }
@@ -43,11 +44,11 @@ trait MessageTrait
     }
     public function hasHeader($header) : bool
     {
-        return isset($this->headerNames[\strtolower($header)]);
+        return isset($this->headerNames[Utils::asciiToLower($header)]);
     }
     public function getHeader($header) : array
     {
-        $header = \strtolower($header);
+        $header = Utils::asciiToLower($header);
         if (!isset($this->headerNames[$header])) {
             return [];
         }
@@ -72,7 +73,7 @@ trait MessageTrait
             }
         }
         $value = $this->normalizeHeaderValue($value);
-        $normalized = \strtolower($header);
+        $normalized = Utils::asciiToLower($header);
         $new = clone $this;
         if (isset($new->headerNames[$normalized])) {
             unset($new->headers[$new->headerNames[$normalized]]);
@@ -95,7 +96,7 @@ trait MessageTrait
             }
         }
         $value = $this->normalizeHeaderValue($value);
-        $normalized = \strtolower($header);
+        $normalized = Utils::asciiToLower($header);
         $new = clone $this;
         if (isset($new->headerNames[$normalized])) {
             $header = $this->headerNames[$normalized];
@@ -111,7 +112,7 @@ trait MessageTrait
      */
     public function withoutHeader($header) : MessageInterface
     {
-        $normalized = \strtolower($header);
+        $normalized = Utils::asciiToLower($header);
         if (!isset($this->headerNames[$normalized])) {
             return $this;
         }
@@ -157,7 +158,7 @@ trait MessageTrait
                 }
             }
             $value = $this->normalizeHeaderValue($value);
-            $normalized = \strtolower($header);
+            $normalized = Utils::asciiToLower($header);
             if (isset($this->headerNames[$normalized])) {
                 $header = $this->headerNames[$normalized];
                 $this->headers[$header] = \array_merge($this->headers[$header], $value);
@@ -224,6 +225,21 @@ trait MessageTrait
         }
         if (!\preg_match('/^[a-zA-Z0-9\'`#$%&*+.^_|~!-]+$/D', $header)) {
             throw new \InvalidArgumentException(\sprintf('"%s" is not valid header name.', $header));
+        }
+    }
+    /**
+     * @param mixed $version
+     */
+    private function assertProtocolVersion($version) : void
+    {
+        if (\is_string($version)) {
+            $this->assertNoLineSeparators($version, 'Protocol version');
+        }
+    }
+    private function assertNoLineSeparators(string $value, string $field) : void
+    {
+        if (\strpbrk($value, "\r\n") !== \false) {
+            throw new \InvalidArgumentException($field . ' must not contain CR or LF characters.');
         }
     }
     /**

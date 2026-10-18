@@ -6,7 +6,7 @@ use SMTP2GOWPPlugin\SMTP2GO\Mime\Detector;
 class Attachment
 {
     /**
-     * The patch to the the attachment
+     * The path to the the attachment
      * @var string
      */
     protected $filepath;

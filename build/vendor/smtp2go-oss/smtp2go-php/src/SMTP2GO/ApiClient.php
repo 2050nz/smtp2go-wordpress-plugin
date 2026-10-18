@@ -156,7 +156,7 @@ class ApiClient
                     $service->getMethod(),
                     $this->getApiUrl() . $service->getEndpoint(),
                     //ensures user options can overwrite these defaults
-                    $this->requestOptions + ['json' => $body, 'verify' => $caPathOrFile, 'headers' => ['host' => $this->getHost()], 'timeout' => $this->getTimeout(), $curlOpts, 'on_stats' => function (\SMTP2GOWPPlugin\GuzzleHttp\TransferStats $stats) {
+                    $this->requestOptions + $curlOpts + ['json' => $body, 'verify' => $caPathOrFile, 'timeout' => $this->getTimeout(), 'on_stats' => function (\SMTP2GOWPPlugin\GuzzleHttp\TransferStats $stats) {
                         $handlerStats = $stats->getHandlerStats();
                         $this->ipToIgnore = $handlerStats['primary_ip'] ?? null;
                     }]

@@ -18,7 +18,7 @@ use SMTP2GOWPPlugin\SMTP2GO\Types\Mail\FileAttachment;
 class Send implements BuildsRequest
 {
     /**
-     * Sender RFC-822 formatted email "John Smith <john@example.com>"
+     * Sender RFC-5322 formatted email "John Smith <john@example.com>"
      *
      * @var string
      */
@@ -256,7 +256,7 @@ class Send implements BuildsRequest
         return $this->sender;
     }
     /**
-     * Set sender as RFC-822 formatted email "John Smith <john@example.com>"
+     * Set sender as RFC-5322 formatted email "John Smith <john@example.com>"
      *
      * @param Address $address
      *
@@ -264,14 +264,7 @@ class Send implements BuildsRequest
      */
     public function setSender(Address $address) : Send
     {
-        $name = $address->getName();
-        $email = $address->getEmail();
-        if (!empty($name)) {
-            $email = \str_replace(['<', '>'], '', $email);
-            $this->sender = "\"{$name}\" <{$email}>";
-        } else {
-            $this->sender = "{$email}";
-        }
+        $this->sender = $address->toString();
         return $this;
     }
     /**
@@ -364,14 +357,7 @@ class Send implements BuildsRequest
         if (!\in_array($addressType, ['to', 'cc', 'bcc'])) {
             throw new InvalidArgumentException('$addressType must be one of either "to", "cc" or "bcc"');
         }
-        $name = $address->getName();
-        $email = $address->getEmail();
-        if (!empty($name)) {
-            $email = \str_replace(['<', '>'], '', $email);
-            $this->{$addressType}[] = "{$name} <{$email}>";
-        } else {
-            $this->{$addressType}[] = "{$email}";
-        }
+        $this->{$addressType}[] = $address->toString();
         return $this;
     }
     /**

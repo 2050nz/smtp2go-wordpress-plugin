@@ -42,6 +42,8 @@ class SMTP2GOMailer extends PHPMailer
 
         $from = [SettingsHelper::getOption('smtp2go_from_address'), SettingsHelper::getOption('smtp2go_from_name')];
 
+        $fastAccept = SettingsHelper::getOption('smtp2go_use_fast_accept') ?? false;
+
         $addresses = [];
         foreach ($this->getToAddresses() as $addressItem) {
             $addresses[] = new Address(...$addressItem);
@@ -54,6 +56,10 @@ class SMTP2GOMailer extends PHPMailer
         );
 
         $mailSendService->addCustomHeader(new CustomHeader('X-Smtp2go-WP', SMTP2GO_WORDPRESS_PLUGIN_VERSION));
+
+        if ($fastAccept) {
+            $mailSendService->setFastaccept(true);
+        }
 
         $this->processCustomHeaders($mailSendService);
         $this->processReplyTos($mailSendService);
