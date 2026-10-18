@@ -7,7 +7,6 @@ use SMTP2GOWPPlugin\GuzzleHttp\HandlerStack;
 use SMTP2GOWPPlugin\GuzzleHttp\Promise as P;
 use SMTP2GOWPPlugin\GuzzleHttp\Promise\PromiseInterface;
 use SMTP2GOWPPlugin\GuzzleHttp\TransferStats;
-use SMTP2GOWPPlugin\GuzzleHttp\Utils;
 use SMTP2GOWPPlugin\Psr\Http\Message\RequestInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\ResponseInterface;
 use SMTP2GOWPPlugin\Psr\Http\Message\StreamInterface;
@@ -131,7 +130,7 @@ class MockHandler implements \Countable
             if ($value instanceof ResponseInterface || $value instanceof \Throwable || $value instanceof PromiseInterface || \is_callable($value)) {
                 $this->queue[] = $value;
             } else {
-                throw new \TypeError('Expected a Response, Promise, Throwable or callable. Found ' . Utils::describeType($value));
+                throw new \TypeError('Expected a Response, Promise, Throwable or callable. Found ' . \get_debug_type($value));
             }
         }
     }

@@ -67,8 +67,9 @@ class WordpressPluginAdmin
         $this->plugin_name = $plugin_name;
         $this->version     = $version;
         $this->keyHelper = new SecureApiKeyHelper();
-        //wrap in check is_admin() ?
-        $this->checkForConflictingPlugins();
+        if (is_admin()) {
+            $this->checkForConflictingPlugins();
+        }
     }
 
     public function truncateLogs()
@@ -105,17 +106,28 @@ class WordpressPluginAdmin
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Pragma: no-cache');
         header('Expires: 0');
+        // Prevent CSV formula injection: a leading =, +, -, @ (or tab/CR)
+        // can be interpreted as a formula by spreadsheet apps. These fields
+        // derive from email content, which can be attacker-influenced.
+        $sanitize = static function ($value) {
+            $value = (string) $value;
+            if ($value !== '' && preg_match('/^[=+\-@\t\r]/', $value)) {
+                $value = "'" . $value;
+            }
+            return $value;
+        };
+
         $h = fopen('php://output', 'w');
         fputcsv($h, ['Site ID', 'To', 'From', 'Subject', 'Response', 'Created At']);
         foreach ($logs as $logItem) {
-            fputcsv($h, [
+            fputcsv($h, array_map($sanitize, [
                 $logItem->site_id,
                 $logItem->to,
                 $logItem->from,
                 $logItem->subject,
                 $logItem->response,
                 $logItem->created_at,
-            ]);
+            ]));
         }
         fclose($h);
 
@@ -139,7 +151,7 @@ class WordpressPluginAdmin
         if (!$success) {
             $res['reason'] = 'Unable to delete the API key from the database.';
         }
-        header("Constants-Type: application/json");
+
         wp_send_json($res);
         exit;
     }
@@ -432,15 +444,7 @@ class WordpressPluginAdmin
         return $final;
     }
 
-    public function outputRadioOptionsHtml($args)
-    {
-        $currentValue = \SMTP2GO\App\SettingsHelper::getOption($args['name'], 1);
-        foreach ($args['options'] as $value => $label) {
-            $selected = $value == $currentValue ? 'checked="checked"' : '';
-            echo '<input ' . $selected . ' type="radio" name="' . $args['name'] . '" value="' . $value . '">' . $label . PHP_EOL;
-        }
-        echo '<br/>', $args['label'];
-    }
+
 
     /**
      * Output the html for managing custom headers
