@@ -240,7 +240,7 @@ class WordpressPlugin
         }
 
         if (!$phpmailer instanceof SMTP2GOMailer) {
-            $phpmailer          = new SMTP2GOMailer;
+            $phpmailer          = new SMTP2GOMailer(true);
             $phpmailer::$validator = static function ($email) {
                 return (bool) is_email($email);
             };
