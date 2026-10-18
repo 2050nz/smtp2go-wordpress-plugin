@@ -101,6 +101,14 @@ class SMTP2GOMailer extends PHPMailer
         // `smtp2go_api_region` filter) to the new client. If a client has
         // already been injected via setApiClient() we leave it alone.
         $client = $this->apiClient ?? ApiClientFactory::create();
+
+        // create() returns null when no API key is available (e.g. the
+        // SMTP2GO_API_KEY constant resolves to an empty env var)
+        if (!$client) {
+            $this->setError('SMTP2GO Error: No API key is configured. Please check your SMTP2GO plugin settings.');
+            throw new \PHPMailer\PHPMailer\Exception($this->ErrorInfo, self::STOP_CRITICAL);
+        }
+
         $client->setMaxSendAttempts(2);
         $client->setTimeoutIncrement(0);
 
