@@ -140,7 +140,10 @@ class WordpressPlugin
 
         $this->loader->addFilter('plugin_action_links_' . SMTP2GO_PLUGIN_BASENAME, $plugin_admin, 'addSettingsLink');
 
+        $this->loader->addAction('admin_init', $this, 'maybeUpgradeKeyEncryption');
         $this->loader->addAction('admin_init', $plugin_admin, 'registerSettings');
+        $this->loader->addAction('admin_init', $this, 'checkWeCanDecryptKey');
+
 
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueStyles');
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueScripts');
@@ -150,6 +153,60 @@ class WordpressPlugin
         $this->loader->addAction('wp_ajax_smtp2go_clear_saved_api_key', $plugin_admin, 'clearSavedApiKey');
 
         $this->loader->addAction('phpmailer_init', $this, 'configurePhpmailer');
+    }
+
+    public function maybeUpgradeKeyEncryption()
+    {
+        $secureHelper = new SecureApiKeyHelper();
+        if (!$secureHelper->canEncrypt()) {
+            return;
+        }
+        //check if the key is already set as a constant
+        if (
+            defined("SMTP2GO_ENCRYPTION_KEY")
+            && !empty(constant("SMTP2GO_ENCRYPTION_KEY"))
+            && !defined("SMTP2GO_API_KEY")
+        ) {
+            $setting = SettingsHelper::getOption('smtp2go_api_key');
+
+            $dec = $secureHelper->decryptKey($setting);
+            if (
+                $secureHelper->isDecrypted($dec)
+                && $secureHelper->getLastUsedKey() !== constant("SMTP2GO_ENCRYPTION_KEY")
+            ) {
+
+                $newEncrypted = $secureHelper->encryptKey($dec);
+                update_option('smtp2go_api_key', $newEncrypted);
+            }
+        }
+    }
+
+    public function checkWeCanDecryptKey()
+    {
+        $setting = SettingsHelper::getOption('smtp2go_api_key');
+        if (!$setting) {
+            return;
+        }
+        $secureHelper = new SecureApiKeyHelper();
+
+        $setting = $secureHelper->decryptKey($setting);
+
+        if (!$secureHelper->isDecrypted($setting)) {
+            add_action('admin_notices', [$this, 'decryptKeyFailureNotice']);
+        }
+    }
+
+    public function decryptKeyFailureNotice()
+    {
+        $class = 'notice notice-error';
+        $message = __('SMTP2GO Wordpress Plugin: We cant decrypt your API Key. Please re-enter your key ', $this->plugin_name);
+        $link = admin_url('admin.php?page=' . $this->plugin_name);
+        printf(
+            '<div class="%1$s"><span>%2$s</span><a href="%3$s">here</a></div>',
+            esc_attr($class),
+            esc_html($message),
+            $link
+        );
     }
 
     public function configurePhpmailer($phpmailer)
