@@ -651,7 +651,22 @@ class WordpressPluginAdmin
     public function outputApiKeyHtml()
     {
         if (SettingsHelper::settingHasDefinedConstant('smtp2go_api_key')) {
-            echo '<span style="cursor: default; font-weight: normal;">The API key is defined as a constant in your wp-config.php file.</span>';
+            $constantKey = trim((string) SettingsHelper::getOption('smtp2go_api_key'));
+            $error = '';
+            if ($constantKey === '') {
+                // e.g. define('SMTP2GO_API_KEY', getenv('SMTP2GO_API_KEY')) with the env var unset
+                $error = 'The SMTP2GO_API_KEY constant in your wp-config.php file is empty, so emails can\'t be sent. If it\'s read from an environment variable, check that variable is set, then reload this page.';
+            } elseif (strpos($constantKey, 'api-') !== 0) {
+                $error = 'The SMTP2GO_API_KEY constant in your wp-config.php file isn\'t a valid API key (it should start with "api-"). Update it with a valid key, then reload this page.';
+            } elseif (!$this->hasEndpointPermission('/email/send')) {
+                $error = 'SMTP2GO couldn\'t confirm the API key in your wp-config.php file can send email. Check the key is correct and has the <i>/email/send</i> permission, then reload this page.';
+            }
+
+            if ($error) {
+                echo '<p class="notice notice-error" style="padding:10px">', $error, '</p>';
+            } else {
+                echo '<span style="cursor: default; font-weight: normal;">The API key is defined as a constant in your wp-config.php file.</span>';
+            }
             if (get_option('smtp2go_api_key')) {
                 //show a delete from db button
                 echo '<br/><a href="javascript:;" class="js-smtp2go_delete_api_key">Delete API Key from Database</a>';
