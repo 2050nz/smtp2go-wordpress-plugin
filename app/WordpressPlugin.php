@@ -142,7 +142,7 @@ class WordpressPlugin
 
         $this->loader->addAction('admin_init', $this, 'maybeUpgradeKeyEncryption');
         $this->loader->addAction('admin_init', $plugin_admin, 'registerSettings');
-        $this->loader->addAction('admin_init', $this, 'checkWeCanDecryptKey');
+        $this->loader->addAction('admin_init', $plugin_admin, 'maybeShowApiKeyNotice');
 
 
         $this->loader->addAction('admin_enqueue_scripts', $plugin_admin, 'enqueueStyles');
@@ -179,34 +179,6 @@ class WordpressPlugin
                 update_option('smtp2go_api_key', $newEncrypted);
             }
         }
-    }
-
-    public function checkWeCanDecryptKey()
-    {
-        $setting = SettingsHelper::getOption('smtp2go_api_key');
-        if (!$setting) {
-            return;
-        }
-        $secureHelper = new SecureApiKeyHelper();
-
-        $setting = $secureHelper->decryptKey($setting);
-
-        if (!$secureHelper->isDecrypted($setting)) {
-            add_action('admin_notices', [$this, 'decryptKeyFailureNotice']);
-        }
-    }
-
-    public function decryptKeyFailureNotice()
-    {
-        $class = 'notice notice-error';
-        $message = __('SMTP2GO Wordpress Plugin: We cant decrypt your API Key. Please re-enter your key ', $this->plugin_name);
-        $link = admin_url('admin.php?page=' . $this->plugin_name);
-        printf(
-            '<div class="%1$s"><span>%2$s</span><a href="%3$s">here</a></div>',
-            esc_attr($class),
-            esc_html($message),
-            $link
-        );
     }
 
     public function configurePhpmailer($phpmailer)

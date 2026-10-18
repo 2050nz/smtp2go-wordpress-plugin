@@ -95,6 +95,12 @@ class SecureApiKeyHelper
         if (!$this->canEncrypt() || $this->isDecrypted($maybeEncryptedKey)) {
             return $maybeEncryptedKey;
         }
+        //not something we encrypted (too short to hold an IV + ciphertext), no key will decrypt it
+        $raw = is_string($maybeEncryptedKey) ? base64_decode($maybeEncryptedKey, true) : false;
+        if ($raw === false || strlen($raw) <= $this->ivlen) {
+            $this->attemptedKeys = [];
+            return false;
+        }
         if ($encKey === null) {
             $this->attemptedKeys = [];
             $this->lastUsedKey = "";

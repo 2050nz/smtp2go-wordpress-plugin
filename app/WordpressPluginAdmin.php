@@ -56,6 +56,13 @@ class WordpressPluginAdmin
     private $keyPermissions = [];
 
     /**
+     * The error returned by the last api_keys/permissions call, if the API rejected the key
+     *
+     * @var string|null
+     */
+    private $keyPermissionsError = null;
+
+    /**
      * Initialize the class and set its properties.
      *
      * @since    1.0.1
@@ -651,19 +658,9 @@ class WordpressPluginAdmin
     public function outputApiKeyHtml()
     {
         if (SettingsHelper::settingHasDefinedConstant('smtp2go_api_key')) {
-            $constantKey = trim((string) SettingsHelper::getOption('smtp2go_api_key'));
-            $error = '';
-            if ($constantKey === '') {
-                // e.g. define('SMTP2GO_API_KEY', getenv('SMTP2GO_API_KEY')) with the env var unset
-                $error = 'The SMTP2GO_API_KEY constant in your wp-config.php file is empty, so emails can\'t be sent. If it\'s read from an environment variable, check that variable is set, then reload this page.';
-            } elseif (strpos($constantKey, 'api-') !== 0) {
-                $error = 'The SMTP2GO_API_KEY constant in your wp-config.php file isn\'t a valid API key (it should start with "api-"). Update it with a valid key, then reload this page.';
-            } elseif (!$this->hasEndpointPermission('/email/send')) {
-                $error = 'SMTP2GO couldn\'t confirm the API key in your wp-config.php file can send email. Check the key is correct and has the <i>/email/send</i> permission, then reload this page.';
-            }
-
-            if ($error) {
-                echo '<p class="notice notice-error" style="padding:10px">', $error, '</p>';
+            $problem = $this->getApiKeyProblem();
+            if ($problem) {
+                echo '<p class="notice notice-error" style="padding:10px">', wp_kses_post($problem), '</p>';
             } else {
                 echo '<span style="cursor: default; font-weight: normal;">The API key is defined as a constant in your wp-config.php file.</span>';
             }
@@ -709,6 +706,10 @@ class WordpressPluginAdmin
         echo '<input type="hidden" name="smtp2go_api_key" value="" readonly/>';
         echo '&nbsp;<a class="j-smtp2go_toggle_apikey_edit" href="javascript:;">Edit</a>';
         echo '</div>';
+        // undecryptable keys are already flagged above, this catches keys the API rejects
+        if ($secureHelper->isDecrypted($decrypted) && ($problem = $this->getApiKeyProblem())) {
+            echo '<p class="notice notice-error" style="padding:10px">', wp_kses_post($problem), '</p>';
+        }
         echo $hint;
     }
 
@@ -885,10 +886,93 @@ class WordpressPluginAdmin
 
         $client->consume(new Service('api_keys/permissions'));
         $permissionData = $client->getResponseBody();
+        $this->keyPermissionsError = null;
         if (isset($permissionData->data) && is_array($permissionData->data)) {
             $this->keyPermissions = $permissionData->data ?? [];
+        } elseif (!empty($permissionData->data->error)) {
+            $this->keyPermissionsError = $permissionData->data->error;
         }
         return $this->keyPermissions;
+    }
+
+    /**
+     * Work out whether the configured API key (constant or database) can be used to send email.
+     *
+     * Remote checks are cached per key for an hour so admin page loads don't hit the API each time.
+     * If the API can't be reached at all we don't report a problem.
+     *
+     * @return string Empty if the key looks fine, otherwise an HTML-safe message describing the problem
+     */
+    public function getApiKeyProblem()
+    {
+        $isConstant = SettingsHelper::settingHasDefinedConstant('smtp2go_api_key');
+        $setting    = trim((string) SettingsHelper::getOption('smtp2go_api_key'));
+        $source     = $isConstant ? 'in your wp-config.php file' : 'saved in the plugin settings';
+
+        if ($setting === '') {
+            if (!$isConstant) {
+                // no key entered yet, the settings form asks for one
+                return '';
+            }
+            // e.g. define('SMTP2GO_API_KEY', getenv('SMTP2GO_API_KEY')) with the env var unset
+            return 'The SMTP2GO_API_KEY constant in your wp-config.php file is empty, so emails can\'t be sent. If it\'s read from an environment variable, check that variable is set, then reload this page.';
+        }
+
+        $key = $this->keyHelper->decryptKey($setting);
+        if (!$this->keyHelper->isDecrypted($key)) {
+            if ($isConstant) {
+                return 'The SMTP2GO_API_KEY constant in your wp-config.php file isn\'t a valid API key (it should start with "api-"). Update it with a valid key, then reload this page.';
+            }
+            return 'We cant decrypt your API Key. Please re-enter your key in the plugin settings.';
+        }
+
+        // the message wording depends on where the key came from, so that's part of the cache key too
+        $cacheKey = 'smtp2go_api_key_problem_' . md5($key . SettingsHelper::getApiRegion() . ($isConstant ? 'constant' : 'db'));
+        // always re-check on the plugin's own page so "reload this page" picks up a fixed key
+        $onPluginPage = isset($_GET['page']) && $_GET['page'] === $this->plugin_name;
+        $cached       = $onPluginPage ? false : get_transient($cacheKey);
+        if ($cached !== false) {
+            return $cached === 'ok' ? '' : $cached;
+        }
+
+        $permissions = $this->getApiKeyPermissions($key);
+        if (in_array('/email/send', $permissions)) {
+            $problem = '';
+        } elseif ($this->keyPermissionsError) {
+            $problem = 'SMTP2GO rejected the API key ' . $source . ': <em>' . esc_html($this->keyPermissionsError) . '</em> '
+                . ($isConstant ? 'Update the key in wp-config.php, then reload this page.' : 'Please re-enter a valid key in the plugin settings.');
+        } elseif (!empty($permissions)) {
+            $problem = 'The API key ' . $source . ' is missing the <i>/email/send</i> permission, so emails can\'t be sent. Add the permission to the key in your SMTP2GO account, then reload this page.';
+        } else {
+            // couldn't reach the API, don't cache or alarm anyone
+            return '';
+        }
+
+        set_transient($cacheKey, $problem === '' ? 'ok' : $problem, HOUR_IN_SECONDS);
+        return $problem;
+    }
+
+    /**
+     * Show a site-wide admin notice when the API key can't be used
+     */
+    public function maybeShowApiKeyNotice()
+    {
+        if (wp_doing_ajax() || !current_user_can('manage_options')) {
+            return;
+        }
+        $problem = $this->getApiKeyProblem();
+        if (!$problem) {
+            return;
+        }
+        add_action('admin_notices', function () use ($problem) {
+            printf(
+                '<div class="notice notice-error"><p>%1$s %2$s <a href="%3$s">%4$s</a></p></div>',
+                esc_html__('SMTP2GO Wordpress Plugin:', $this->plugin_name),
+                wp_kses_post($problem),
+                esc_url(admin_url('admin.php?page=' . $this->plugin_name)),
+                esc_html__('Review your settings', $this->plugin_name)
+            );
+        });
     }
 
     /** input validations */
