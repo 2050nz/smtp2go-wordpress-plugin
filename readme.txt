@@ -138,6 +138,18 @@ Our data centers are located around the world, meaning lightning-fast connection
 
 == Changelog ==
 
+= v1.18.0 =
+* add optional SMTP2GO_ENCRYPTION_KEY constant to encrypt the stored API key independently of WordPress salts
+* automatically re-encrypt a saved API key with SMTP2GO_ENCRYPTION_KEY when it is added
+* add admin notices when the API key can't be decrypted, is empty or invalid, is rejected by SMTP2GO, or is missing the /email/send permission
+* add optional fast accept setting for faster API responses
+* fix fatal error when the SMTP2GO_API_KEY constant is empty (e.g. an unset environment variable)
+* report failed sends through the wp_mail_failed action
+* prevent CSV formula injection in log downloads
+* fix usage bar display and failed-response handling
+* fix sender name field pattern validation in Chromium
+* only check for conflicting plugins in the admin
+* update smtp2go-php to 1.3
 = v1.17.1 =
 * test against version 7.1
 = v1.17.0 =
