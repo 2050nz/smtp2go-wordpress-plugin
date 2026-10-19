@@ -161,11 +161,11 @@ class WordpressPlugin
         if (!$secureHelper->canEncrypt()) {
             return;
         }
-        //check if the key is already set as a constant
+        //skip if the key comes from a constant, the database value isn't in use
         if (
             defined("SMTP2GO_ENCRYPTION_KEY")
             && !empty(constant("SMTP2GO_ENCRYPTION_KEY"))
-            && !defined("SMTP2GO_API_KEY")
+            && !SettingsHelper::settingHasDefinedConstant('smtp2go_api_key')
         ) {
             $setting = SettingsHelper::getOption('smtp2go_api_key');
 

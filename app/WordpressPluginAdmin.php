@@ -421,7 +421,7 @@ class WordpressPluginAdmin
                 'label'      => '<span style="cursor: default; font-weight: normal;">This is the default name that your emails will be sent from (no " or / allowed).</span>',
                 'required' => true,
                 'placeholder' => 'John Example',
-                'pattern' => '[^/"]+',
+                'pattern' => '[^\/"]+',
             )
         );
 
@@ -844,13 +844,13 @@ class WordpressPluginAdmin
         }
 
         $request = $phpmailer->getLastRequest();
-        $response = $request->getResponseBody();
         $reason = null;
         if (empty($request)) {
             $reason = 'Unable to find the request made to the SMTP2GO API. The most likely cause is a conflict with another plugin.';
             wp_send_json(array('success' => 0, 'reason' => htmlentities($reason)));
             exit;
         }
+        $response = $request->getResponseBody();
 
         Logger::errorLog('last request!' . print_r($request, 1));
         Logger::errorLog('last response!' . print_r($response, 1));
@@ -921,7 +921,7 @@ class WordpressPluginAdmin
         $key = $this->keyHelper->decryptKey($setting);
         if (!$this->keyHelper->isDecrypted($key)) {
             if ($isConstant) {
-                return 'The SMTP2GO_API_KEY constant in your wp-config.php file isn\'t a valid API key (it should start with "api-"). Update it with a valid key, then reload this page.';
+                return 'The SMTP2GO_API_KEY constant in your wp-config.php file isn\'t a valid API key (it should start with "api-"). Update it (or the environment variable it reads from) with a valid key, then reload this page.';
             }
             return 'We cant decrypt your API Key. Please re-enter your key in the plugin settings.';
         }
@@ -940,7 +940,7 @@ class WordpressPluginAdmin
             $problem = '';
         } elseif ($this->keyPermissionsError) {
             $problem = 'SMTP2GO rejected the API key ' . $source . ': <em>' . esc_html($this->keyPermissionsError) . '</em> '
-                . ($isConstant ? 'Update the key in wp-config.php, then reload this page.' : 'Please re-enter a valid key in the plugin settings.');
+                . ($isConstant ? 'Update the key in wp-config.php (or the environment variable it reads from), then reload this page.' : 'Please re-enter a valid key in the plugin settings.');
         } elseif (!empty($permissions)) {
             $problem = 'The API key ' . $source . ' is missing the <i>/email/send</i> permission, so emails can\'t be sent. Add the permission to the key in your SMTP2GO account, then reload this page.';
         } else {
