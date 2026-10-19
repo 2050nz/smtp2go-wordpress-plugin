@@ -318,8 +318,11 @@ class WordpressPluginAdmin
             'smtp2go_settings_section',
             array(
                 'name' => 'smtp2go_use_fast_accept',
-                'label' => __('If enabled, the email will be accepted immediately and sent in a background process. Use webhooks if you need information about final delivery to the recipient.'),
-
+                'label' => __('If enabled, the email will be accepted immediately and sent in a background process. Use webhooks if you need information about final delivery to the recipient.', $this->plugin_name),
+                'links' => array(
+                    'https://developers.smtp2go.com/reference/send-standard-email' => __('Fast accept in the SMTP2GO API docs', $this->plugin_name),
+                    'https://developers.smtp2go.com/docs/webhooks-overview'        => __('Webhooks overview', $this->plugin_name),
+                ),
             )
         );
 
@@ -379,7 +382,7 @@ class WordpressPluginAdmin
             'smtp2go_settings_section',
             array(
                 'name' => 'smtp2go_from_address',
-                'label' => '<span style="cursor: default; font-weight: normal;">This is the default email address that your emails will be sent from.</span>',
+                'label' => __('This is the default email address that your emails will be sent from.', $this->plugin_name),
                 'type' => 'email',
                 'required' => true,
                 'placeholder' => 'john@example.com'
@@ -399,7 +402,10 @@ class WordpressPluginAdmin
             'smtp2go_settings_section',
             array(
                 'name' => 'smtp2go_force_from_address',
-                'label' => __('Ignores other plugin settings and forces the From address to be the one set above.', $this->plugin_name),
+                'label' => __('Ignores other plugin settings and forces the From address to be the one set above. SMTP2GO only accepts email from a verified sender, so other plugins\' From addresses can be rejected unless their domain is verified.', $this->plugin_name),
+                'links' => array(
+                    'https://developers.smtp2go.com/docs/getting-started#sender-verification' => __('Sender verification in the SMTP2GO docs', $this->plugin_name),
+                ),
             )
         );
 
@@ -418,7 +424,7 @@ class WordpressPluginAdmin
             'smtp2go_settings_section',
             array(
                 'name' => 'smtp2go_from_name',
-                'label'      => '<span style="cursor: default; font-weight: normal;">This is the default name that your emails will be sent from (no " or / allowed).</span>',
+                'label'      => __('This is the default name that your emails will be sent from (no " or / allowed).', $this->plugin_name),
                 'required' => true,
                 'placeholder' => 'John Example',
                 'pattern' => '[^\/"]+',
@@ -577,9 +583,32 @@ class WordpressPluginAdmin
         echo '<input type="' . $type . '"' . $required . ' class="smtp2go_text_input" name="' . $field_name . '"';
         echo ' value="' . esc_attr($setting) . '" placeholder="' . esc_attr($placeholder) . '"' . $pattern . '/>';
 
-        if (!empty($args['label'])) {
-            $label = $args['label'];
-            echo '<br /><label for="' . $field_name . '">' . $label . '</label> ';
+        $this->outputFieldDescription($field_name, $args['label'] ?? '', $args['links'] ?? array());
+    }
+
+    /**
+     * Output a setting's description under its input, plus an optional line of doc links.
+     * Every settings row uses this so the spacing below each input matches.
+     *
+     * @param string $field_name id of the input the description labels, '' for none
+     * @param string $description trusted HTML
+     * @param array $links url => link text, opened in a new tab
+     * @return void
+     */
+    private function outputFieldDescription($field_name, $description, $links = array())
+    {
+        if (!empty($description)) {
+            echo '<p class="description smtp2go_description">';
+            echo $field_name ? '<label for="' . esc_attr($field_name) . '">' . $description . '</label>' : $description;
+            echo '</p>';
+        }
+
+        if (!empty($links)) {
+            $anchors = array();
+            foreach ($links as $url => $text) {
+                $anchors[] = '<a href="' . esc_url($url) . '" target="_blank" rel="noopener noreferrer">' . esc_html($text) . '</a>';
+            }
+            echo '<p class="description smtp2go_description">' . implode(' | ', $anchors) . '</p>';
         }
     }
 
@@ -612,7 +641,8 @@ class WordpressPluginAdmin
         if (!empty($args['hint'])) {
             $hint = '<p>' . $args['hint'] . '</p>';
         }
-        echo '<div style="display:flex;align-items:center;"><input  id="' . $field_name . '" type="checkbox"' . $required . ' class="smtp2go_text_input" name="' . $field_name . '" value="1"' . $checked . '/> <label for="' . $field_name . '">' . $label . '</label>' . '</div>';
+        echo '<input id="' . $field_name . '" type="checkbox"' . $required . ' class="smtp2go_text_input" name="' . $field_name . '" value="1"' . $checked . '/>';
+        $this->outputFieldDescription($field_name, $label, $args['links'] ?? array());
         echo $hint;
     }
 
@@ -650,9 +680,11 @@ class WordpressPluginAdmin
             );
         }
         echo '</select>';
-        echo '<br /><label for="' . esc_attr($field_name) . '"><span style="cursor: default; font-weight: normal;">'
-            . '<br/>Pin API requests to a specific regional endpoint. <a href="https://developers.smtp2go.com/docs/endpoints" target="_blank">See docs here.</a>'
-            . '</span></label>';
+        $this->outputFieldDescription(
+            $field_name,
+            esc_html__('Pin API requests to a specific regional endpoint.', $this->plugin_name),
+            array('https://developers.smtp2go.com/docs/endpoints' => __('Regional endpoints in the SMTP2GO API docs', $this->plugin_name))
+        );
     }
 
     public function outputApiKeyHtml()
@@ -679,7 +711,7 @@ class WordpressPluginAdmin
             $decrypted = $secureHelper->decryptKey($setting);
         }
 
-        $hint    = '<span style="cursor: default; font-weight: normal;">The API key will need permissions <i>/email/send</i> and optionally <i>/stats/email_summary</i>.</span>';
+        $hint    = 'The API key will need permissions <i>/email/send</i> and optionally <i>/stats/email_summary</i>.';
         if (empty($setting)) {
             $this->outputTextFieldHtml(array(
                 'name'     => 'smtp2go_api_key',
@@ -690,7 +722,7 @@ class WordpressPluginAdmin
             return;
         }
 
-        echo '<div style="display:flex;align-items:center;margin-bottom:10px">';
+        echo '<div style="display:flex;align-items:center;">';
         if ($setting !== false && $secureHelper->isDecrypted($decrypted)) {
             echo '<span class="smtp2go_obscured_key">', substr($decrypted, 0, 9), str_repeat('x', 30), '</span>';
         } else {
@@ -710,7 +742,7 @@ class WordpressPluginAdmin
         if ($secureHelper->isDecrypted($decrypted) && ($problem = $this->getApiKeyProblem())) {
             echo '<p class="notice notice-error" style="padding:10px">', wp_kses_post($problem), '</p>';
         }
-        echo $hint;
+        $this->outputFieldDescription('', $hint);
     }
 
     /**
